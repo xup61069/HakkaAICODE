@@ -2,6 +2,23 @@
 
 客家 AICODE 是一個給新手用的 AI coding 啟動包。目標很簡單：複製一段短提示詞到 Claude Code 或 Codex，貼上 OpenCode Zen 的金鑰，讓 agent 自動把 CC Switch 和 [zen-header-injector](https://github.com/xup61069/zen-header-injector) 裝好，再用免費額度開始寫程式。
 
+## 快速開始（提示詞）
+
+把下面的 `你的 OPENCODE ZEN KEY` 換成自己的金鑰，整段複製貼到 Claude Code 或 Codex：
+
+```text
+請依照 https://github.com/xup61069/HakkaAICODE 的 README，把我這台電腦的 AI coding 環境設定成 OpenCode Zen 免費後端。
+
+OPEN_CODE_ZEN_KEY=你的 OPENCODE ZEN KEY
+
+請自動完成：
+1. 如果沒有 CC Switch，先安裝 CC Switch（Windows 用官方最新 release）。
+2. 下載並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），確認 http://127.0.0.1:15722/v1 有回應。
+3. 依照我目前使用的 agent（Claude Code 或 Codex）設定 provider：base URL 指向 http://127.0.0.1:15722/v1，model 選 mimo-v2.5-free（或 API 回傳的最新 -free 模型）。
+4. 不要把我提供的金鑰寫進 repo、log 或任何公開檔案。
+5. 完成後列出：CC Switch 安裝位置、injector 是否在跑、設定檔改了哪裡。
+```
+
 ## 為什麼這樣設計
 
 - **CC Switch** 負責管理 Claude Code / Codex 的 provider 切換。
@@ -19,15 +36,6 @@
 ```powershell
 winget install OpenJS.NodeJS.LTS --silent
 ```
-
-## 快速開始：直接把提示詞貼過去
-
-任選一個：
-
-- 給 Codex：[prompts/codex.md](prompts/codex.md)
-- 給 Claude Code：[prompts/claude-code.md](prompts/claude-code.md)
-
-把 `你的 OPENCODE ZEN KEY` 換成你自己的金鑰，整段複製給 agent。它會依照本 README 的流程幫你完成。
 
 ## 手動安裝
 
