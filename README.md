@@ -96,6 +96,20 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install-zen-windows.ps1
 
 這個腳本會處理 zen-header-injector 的下載與背景啟動，並嘗試下載 CC Switch 的 Windows portable 版。詳見 [scripts/install-zen-windows.ps1](scripts/install-zen-windows.ps1)。
 
+### 多 KEY 自動輪換（免費額度一直被 429 用光時）
+
+如果單一把 key 動不動就被 `429` 限流，可以多準備幾把 key，讓 injector 自動輪換：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\setup-multikey.ps1
+```
+
+1. 腳本會把多 KEY 版 injector（`scripts/server-multikey.js`）放進 `zen-header-injector` 目錄並重啟。
+2. 第一次執行會建立 `zen-keys.txt` 模板，**請自己把 key 一行一把貼進去**（不要把這個檔案 commit 或外流）。
+3. 某把 key 回 `429`/`401` 時，自動切下一把；被限流的 key 會冷卻退避（60 秒起、逐次加倍、最多 30 分鐘）。
+
+> 提醒：Zen 免費額度是「共用」配額。如果整個免費池都乾了，換幾把 key 都沒用——這是機制能解的上限；額度本身有沒有分帳號計算，以官方公告為準。
+
 ## 免費 AI 路線
 
 持續收集可以合法免費/低門檻開始用的路線：
