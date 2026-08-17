@@ -12,6 +12,15 @@ zen-header-injector 把它包成本地端點：
 http://127.0.0.1:15722/v1
 ```
 
+## 註冊與拿金鑰
+
+1. 打開 <https://opencode.ai/auth>。
+2. 選擇註冊或登入方式。
+3. 登入後到 API keys / Dashboard，依照官方流程完成必要設定（部分畫面會要求付款資料），複製 API key。
+4. 把 API key 存進 CC Switch 的 provider 欄位，或貼進客家AICODE 的提示詞。
+
+官方文件：<https://opencode.ai/docs/zen/>
+
 ## 目前可查到的模型
 
 ```bash

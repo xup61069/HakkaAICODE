@@ -2,6 +2,8 @@
 
 客家 AICODE 是一個給新手用的 AI coding 啟動包。目標很簡單：複製一段短提示詞到 Claude Code 或 Codex，貼上 OpenCode Zen 的金鑰，讓 agent 自動把 CC Switch 和 [zen-header-injector](https://github.com/xup61069/zen-header-injector) 裝好，再用免費額度開始寫程式。
 
+第一次使用：先到 <https://opencode.ai/auth> 拿 OpenCode Zen 的 API key，再把下面的提示詞貼給 Claude Code 或 Codex。金鑰是本人帳號的一部分，註冊步驟不能由 agent 全自動代辦，但貼上金鑰之後的安裝與設定可以全部自動完成。
+
 ## 快速開始（提示詞）
 
 把下面的 `你的 OPENCODE ZEN KEY` 換成自己的金鑰，整段複製貼到 Claude Code 或 Codex：
@@ -12,12 +14,24 @@
 OPEN_CODE_ZEN_KEY=你的 OPENCODE ZEN KEY
 
 請自動完成：
-1. 如果沒有 CC Switch，先安裝 CC Switch（Windows 用官方最新 release）。
-2. 下載並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），確認 http://127.0.0.1:15722/v1 有回應。
-3. 依照我目前使用的 agent（Claude Code 或 Codex）設定 provider：base URL 指向 http://127.0.0.1:15722/v1，model 選 mimo-v2.5-free（或 API 回傳的最新 -free 模型）。
-4. 不要把我提供的金鑰寫進 repo、log 或任何公開檔案。
-5. 完成後列出：CC Switch 安裝位置、injector 是否在跑、設定檔改了哪裡。
+1. 如果 OPEN_CODE_ZEN_KEY 還是空值，先開啟 https://opencode.ai/auth 引導我完成註冊/登入並複製金鑰；我貼給你後再繼續。
+2. 如果沒有 CC Switch，先安裝 CC Switch（Windows 用官方最新 release）。
+3. 下載並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），確認 http://127.0.0.1:15722/v1 有回應。
+4. 依照我目前使用的 agent（Claude Code 或 Codex）設定 provider：base URL 指向 http://127.0.0.1:15722/v1，model 選 mimo-v2.5-free（或 API 回傳的最新 -free 模型）。
+5. 不要把我提供的金鑰寫進 repo、log 或任何公開檔案。
+6. 完成後列出：CC Switch 安裝位置、injector 是否在跑、設定檔改了哪裡。
 ```
+
+## 註冊 OpenCode Zen（第一次使用）
+
+1. 打開 <https://opencode.ai/auth>，選擇註冊或登入方式（以頁面當下提供的為準）。
+2. 登入後進入 OpenCode Zen 的 API keys 或 Dashboard 頁面。
+3. 依照官方流程完成必要設定（部分畫面會要求付款資料；以官方頁面實際顯示為準），複製 API key。
+4. 回到本 README，把 key 貼進上面提示詞的 `OPEN_CODE_ZEN_KEY=...`。
+
+官方文件：<https://opencode.ai/docs/zen/>
+
+> 註冊、付款資料與金鑰只能由你本人完成。自動化能做到的是：你貼上金鑰後，agent 自己安裝 CC Switch、啟動 zen-header-injector、寫好 provider 設定。
 
 ## 為什麼這樣設計
 
