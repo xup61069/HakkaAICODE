@@ -113,7 +113,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install-zen-windows.ps1
 
 - 不要把金鑰寫進 repo 或公開檔案。
 - 只把本地 proxy 綁在 `127.0.0.1`，不要開到區網。
-- 若上游回 `429`，通常是免費共用額度真的到頂了，休息一下再試。
+- 若上游回 `429`，通常是免費共用額度真的到頂了，休息一下再試；也可以直接去辦新帳號，但請先確認上游服務條款允許多帳號，避免被判定濫用。
 
 ## License
 
