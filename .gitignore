@@ -1,8 +1,25 @@
+# Dependencies
 node_modules/
+
+# Logs & Runtime
 *.log
-.env
-.venv/
-__pycache__/
 injector.log
+
+# Environment & API Keys
+.env
+.env.*
+!.env.example
 zen-keys.txt
 zen-keys*.txt
+*.local
+
+# Python
+.venv/
+__pycache__/
+
+# OS & Editor Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.tmp

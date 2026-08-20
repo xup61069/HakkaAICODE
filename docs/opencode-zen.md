@@ -1,6 +1,6 @@
 # OpenCode Zen 免費後端筆記
 
-OpenCode Zen 的免費額度 endpoint 是：
+OpenCode Zen 的官方免費額度 endpoint 是：
 
 ```text
 https://opencode.ai/zen/v1
@@ -12,55 +12,102 @@ zen-header-injector 把它包成本地端點：
 http://127.0.0.1:15722/v1
 ```
 
+---
+
 ## 註冊與拿金鑰
 
 1. 打開 <https://opencode.ai/auth>。
-2. 選擇註冊或登入方式。
-3. 登入後到 API keys / Dashboard，依照官方流程完成必要設定（部分畫面會要求付款資料），複製 API key。
-4. 把 API key 存進 CC Switch 的 provider 欄位，或貼進客家AICODE 的提示詞。
+2. 選擇註冊或登入方式（GitHub / Google / Email）。
+3. 登入後到 API keys / Dashboard，依照官方流程完成必要設定，複製 API key。
+4. 將金鑰寫入本機 `%USERPROFILE%\HakkaAICODE\zen-keys.txt`，或在提示詞中提供給 Agent。
 
 官方文件：<https://opencode.ai/docs/zen/>
 
-## 目前可查到的模型
+---
+
+## 快速檢測模型與端點健康
+
+本專案提供零依賴的檢測工具：
 
 ```bash
-curl https://opencode.ai/zen/v1/models
+# 查看本地代理健康狀態與免費模型清單
+node scripts/check-models.js
+
+# 查看所有可用模型（含非免費模型）
+node scripts/check-models.js --all
 ```
 
-`-free` 結尾的模型是免費額度。其他模型會走付費或 Go endpoint，請自己看官方定價。
+`-free` 結尾的模型屬於免費額度模型（如 `deepseek-v4-flash-free`、`mimo-v2.5-free`、`nemotron-3.5-lightning-free` 等）。
 
-## 為什麼要 zen-header-injector
+---
 
-CC Switch 這類轉送代理會重新組裝請求，不會原封不動帶走 OpenCode Zen 需要的兩個標頭：
+## 為什麼需要 zen-header-injector
+
+CC Switch 或一般 OpenAI 轉發代理在傳送請求時會重新組裝 Header，不會自動帶上 OpenCode Zen 免費方案所必須的兩個特定標頭：
 
 - `x-opencode-client: terminal`
 - `User-Agent: opencode`
 
-zen-header-injector 在轉送時把這兩個標頭補回去，解決 Codex 透過 CC Switch 使用 Zen 免費模型時的 `429 FreeUsageLimitError`。
+zen-header-injector 會在請求轉發時把這兩個標頭補齊，徹底解決 Codex / Claude Code 透過 CC Switch 連線時出現的 `429 FreeUsageLimitError`。
 
-## 多 KEY 自動輪換
+---
 
-單一把 key 一直被 `429` 擋時，可以準備多把 key，由 injector 自動輪換：
+## 多 KEY 自動輪換與熱重載 (Hot-Reload)
 
-1. 執行 `scripts/setup-multikey.ps1`，它會把 `scripts/server-multikey.js` 部署進 `zen-header-injector` 目錄並重啟。
-2. 把 key 一行一把貼進 `zen-keys.txt`（預設 `%USERPROFILE%\HakkaAICODE\zen-keys.txt`，支援 `#` 註解）。這個檔案不要 commit、不要外流。
-3. 之後 injector 收到 `429`（或 `401`）時會自動切到下一把 key；被限流的 key 冷卻退避 60 秒起、逐次加倍、最多 30 分鐘。
+當單一把 API Key 遭遇頻率限制或額度耗盡時，多 KEY 輪換代理會自動接管：
 
-只改 env 也可以，不一定要用檔案：`ZEN_INJECTOR_KEYS="k1,k2,k3"`。
+1. **部署代理**：執行 `powershell -File .\scripts\setup-multikey.ps1`（macOS/Linux 請執行 `bash ./scripts/setup-multikey.sh`）。
+2. **填寫金鑰**：將多把金鑰一行一把貼進 `zen-keys.txt`（預設位置：`%USERPROFILE%\HakkaAICODE\zen-keys.txt`，支援 `#` 註解）。
+3. **即時熱重載**：修改 `zen-keys.txt` 存檔後，背景運行的代理會自動偵測檔案變更並重載金鑰，**無需重啟 Node 進程**。
+4. **智慧退避機制**：
+   - 遭遇 `429` 或 `401` 時自動標記該 Key 冷卻（60 秒起、逐次指數加倍、上限 30 分鐘）。
+   - 自動切換至下一把未在冷卻狀態的可用 Key。
+   - 所有 Key 皆在冷卻時，自動挑選「冷卻剩餘時間最短」的 Key 優先嘗試。
 
-`server-multikey.js` 是原版 `server.js` 的超集——沒有設定任何 key 時行為跟原版一模一樣，可以放心整份換掉。
+---
 
-> 注意：Zen 免費額度是**共用**配額，多 KEY 輪換解的是「單一 key 被限流」這類問題。如果整個免費池真的乾了，輪換並不會變出額度，這點請以官方實際行為為準。
+## 代理健康與狀態檢查端點
 
-## 已知的使用提醒
+可在瀏覽器或終端機呼叫：
 
-- 免費額度是共用配額，不是「無限」。
-- 如果回 `429`，通常代表該時段免費額度已用滿；可以休息一下再試，或使用上面的多 KEY 輪換，或直接去辦新帳號（先確認上游服務條款允許，避免被判定濫用）。
-- 圖片支援以實際模型回應為準；`sync-free-models.py` 會把能力表寫回 Codex 的模型目錄。
-- 付費模型不需要這個 header injector。
+```bash
+curl http://127.0.0.1:15722/__health
+```
 
-## 相關工具
+回傳 JSON 範例：
+```json
+{
+  "status": "ok",
+  "uptimeSeconds": 120,
+  "totalRequests": 45,
+  "totalRotations": 2,
+  "keys": {
+    "total": 3,
+    "ready": 2,
+    "cooling": 1,
+    "currentIndex": 2,
+    "details": [
+      { "index": 1, "maskedKey": "sk-6...ZTLn", "isCooling": false },
+      { "index": 2, "maskedKey": "sk-x...yNPR", "isCooling": false },
+      { "index": 3, "maskedKey": "sk-Q...jRHI", "isCooling": true, "coolingRemainingSeconds": 45 }
+    ]
+  }
+}
+```
 
-- <https://github.com/xup61069/zen-header-injector>
-- <https://github.com/farion1231/cc-switch>
-- <https://opencode.ai>
+---
+
+## 疑難排解 (FAQ)
+
+- **Port 15722 被佔用 (EADDRINUSE)**：
+  重新執行 `powershell -File .\scripts\setup-multikey.ps1` 會自動幫你關閉舊進程並重啟；或自訂端口：`$env:ZEN_INJECTOR_PORT=15723; node scripts/server-multikey.js`。
+- **所有 Key 都回傳 429**：
+  若官方上游整個共用免費池均已飽和，請稍候再試，或使用 [docs/free-ai-tiers.md](free-ai-tiers.md) 介紹的 OpenRouter Free / Google AI Studio / GitHub Models 替代方案。
+
+---
+
+## 相關專案與連結
+
+- [zen-header-injector](https://github.com/xup61069/zen-header-injector)
+- [cc-switch](https://github.com/farion1231/cc-switch)
+- [OpenCode Zen Official](https://opencode.ai)

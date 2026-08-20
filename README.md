@@ -1,134 +1,184 @@
-# 客家AICODE
+# 🍜 客家 AICODE (HakkaAICODE)
 
-客家 AICODE 是一個給新手用的 AI coding 啟動包。目標很簡單：複製一段短提示詞到 Claude Code 或 Codex，貼上 OpenCode Zen 的金鑰，讓 agent 自動把 CC Switch 和 [zen-header-injector](https://github.com/xup61069/zen-header-injector) 裝好，再用免費額度開始寫程式。
+<div align="center">
 
-第一次使用：先到 <https://opencode.ai/auth> 拿 OpenCode Zen 的 API key，再把下面的提示詞貼給 Claude Code 或 Codex。金鑰是本人帳號的一部分，註冊步驟不能由 agent 全自動代辦，但貼上金鑰之後的安裝與設定可以全部自動完成。
+> **「省下每一分算力，用好每一份免費額度。」**  
+> 一個為開發者打造的 AI Coding 免費/低成本後端啟動套件。
 
-## 快速開始（提示詞）
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](#)
+[![Node.js](https://img.shields.io/badge/Node.js-16%2B-green.svg)](#)
+[![Status](https://img.shields.io/badge/Status-Maintained-brightgreen.svg)](#)
 
-把下面的 `你的 OPENCODE ZEN KEY` 換成自己的金鑰，整段複製貼到 Claude Code 或 Codex：
+</div>
+
+---
+
+## 📖 專案簡介
+
+**客家 AICODE** 的核心目標非常純粹：**幫助新手與開發者用最簡單的方式，將 Claude Code、Codex、Cursor、Cline 等 AI 寫程式工具對接到免費的大型語言模型後端。**
+
+只需複製一段預先寫好的提示詞（Prompt），貼給你的 AI Agent，它就會自動幫你把轉發代理、標頭注入器與 [CC Switch](https://github.com/farion1231/cc-switch) 一鍵配置完成，無痛開始寫程式！
+
+---
+
+## 🌟 核心特色
+
+- ⚡ **一鍵自動化配置**：提供專屬提示詞，讓 Claude Code 或 Codex 自己搞定環境配置。
+- 🔄 **多 KEY 自動輪換**：遭遇 `429 Too Many Requests` 或 `401` 自動切換至備用金鑰，並支援指數退避冷卻。
+- 🔥 **金鑰動態熱重載 (Hot-Reload)**：修改 `zen-keys.txt` 存檔立即生效，完全不用重啟代理伺服器。
+- 🩺 **即時健康檢測**：內建 `/__health` 與 `/v1/status` 端點，金鑰去識別化遮蔽，安全無虞。
+- 🔍 **零依賴模型檢查工具**：內建 `scripts/check-models.js`，一秒查詢當前最新可用之免費模型（`-free`）。
+- 💻 **跨平台支援**：支援 Windows (PowerShell) 與 macOS / Linux / WSL (Bash)。
+- 🛡️ **安全第一**：金鑰只存在本機，預設排除於 Git 版本控制之外，絕不上傳公開倉庫。
+
+---
+
+## 🚀 快速開始（一鍵提示詞）
+
+請將以下整段提示詞複製，貼到 **Claude Code** 或 **Codex** 的對話視窗中：
 
 ```text
-請依照 https://github.com/xup61069/HakkaAICODE 的 README，把我這台電腦的 AI coding 環境設定成 OpenCode Zen 免費後端。
+請依照 https://github.com/xup61069/HakkaAICODE 的指引，把我這台電腦的 AI coding 環境設定成 OpenCode Zen 免費後端。
 
 OPEN_CODE_ZEN_KEY=你的 OPENCODE ZEN KEY
+OPEN_CODE_ZEN_KEYS=可選，多 KEY 自動輪換用；有多把 key 就一行一把貼在這裡，沒有就留空
 
-請自動完成：
-1. 如果 OPEN_CODE_ZEN_KEY 還是空值，先開啟 https://opencode.ai/auth 引導我完成註冊/登入並複製金鑰；我貼給你後再繼續。
-2. 如果沒有 CC Switch，先安裝 CC Switch（Windows 用官方最新 release）。
-3. 下載並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），確認 http://127.0.0.1:15722/v1 有回應。
-4. 依照我目前使用的 agent（Claude Code 或 Codex）設定 provider：base URL 指向 http://127.0.0.1:15722/v1，model 選 mimo-v2.5-free（或 API 回傳的最新 -free 模型）。
-5. 不要把我提供的金鑰寫進 repo、log 或任何公開檔案。
-6. 完成後列出：CC Switch 安裝位置、injector 是否在跑、設定檔改了哪裡。
+請自動完成以下項目：
+1. 如果 OPEN_CODE_ZEN_KEY 仍為空，請先開啟 https://opencode.ai/auth 引導我登入並複製 API 金鑰。
+2. 檢查本機是否安裝 CC Switch，若無則下載並安裝最新版本。
+3. 取得並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），改用多 KEY 版 scripts/server-multikey.js 啟動，確認 http://127.0.0.1:15722/v1 正常響應。
+4. 如果提供了 OPEN_CODE_ZEN_KEYS，將金鑰寫入 %USERPROFILE%\HakkaAICODE\zen-keys.txt（不要 commit、不要外流），injector 遇 429/401 會自動輪換下一把。
+5. 依照我目前使用的 agent（Claude Code 或 Codex）設定 Provider：
+   - Base URL: http://127.0.0.1:15722/v1
+   - 預設模型: deepseek-v4-flash-free 或 mimo-v2.5-free（挑選目前可用的 -free 模型）
+6. 不要把我提供的金鑰寫進 repo、log 或任何公開檔案。
+7. 完成後列出：CC Switch 安裝位置、injector 運行狀態、設定檔改了哪裡、zen-keys.txt 裡有幾把 key。
 ```
 
-## 註冊 OpenCode Zen（第一次使用）
+> 💡 更多供應商提示詞（OpenRouter、GitHub Models、Google Gemini 等）請參考 [prompts/](prompts/) 目錄。
 
-1. 打開 <https://opencode.ai/auth>，選擇註冊或登入方式（以頁面當下提供的為準）。
-2. 登入後進入 OpenCode Zen 的 API keys 或 Dashboard 頁面。
-3. 依照官方流程完成必要設定（部分畫面會要求付款資料；以官方頁面實際顯示為準），複製 API key。
-4. 回到本 README，把 key 貼進上面提示詞的 `OPEN_CODE_ZEN_KEY=...`。
+---
 
-官方文件：<https://opencode.ai/docs/zen/>
+## 🏗️ 運作架構
 
-> 註冊、付款資料與金鑰只能由你本人完成。自動化能做到的是：你貼上金鑰後，agent 自己安裝 CC Switch、啟動 zen-header-injector、寫好 provider 設定。
-
-## 為什麼這樣設計
-
-- **CC Switch** 負責管理 Claude Code / Codex 的 provider 切換。
-- **zen-header-injector** 負責在 CC Switch 轉送請求時補上 OpenCode Zen 免費方案需要的 `x-opencode-client` 與 `User-Agent` 標頭，避免 Codex 出現 `429 FreeUsageLimitError`。
-- **OpenCode Zen** 提供一批 `-free` 結尾的模型，可從 `https://opencode.ai/zen/v1/models` 即時查詢。
-
-> 這裡只整理「免費額度、官方免費層、或公開免費 endpoint」的使用方法。額度、模型清單與政策隨時可能被上游調整，請以官方公告為準。
-
-## 你需要準備
-
-1. 這台電腦已經能跑 Claude Code 或 Codex。
-2. 一個 OpenCode Zen 金鑰（登入 [opencode.ai](https://opencode.ai) 後從你的帳戶取得，就是拿來當 API key 的那一組）。
-3. Node.js 16 以上。Windows 可以用：
-
-```powershell
-winget install OpenJS.NodeJS.LTS --silent
+```mermaid
+flowchart LR
+    A[Claude Code / Codex / IDE] -->|OpenAI 格式請求| B[CC Switch / Proxy Client]
+    B -->|轉發至 127.0.0.1:15722| C[zen-header-injector<br>server-multikey.js]
+    C -->|注入 x-opencode-client & User-Agent<br>+ 多 Key 輪換與冷卻退避| D[OpenCode Zen<br>https://opencode.ai/zen/v1]
+    D -->|免費模型回應| C
+    C -->|串流回傳| A
 ```
 
-## 手動安裝
+### 為什麼需要 zen-header-injector？
+- **CC Switch** 負責管理與切換不同 AI Provider。
+- **zen-header-injector** 在轉送請求時補上 OpenCode Zen 免費方案所必須的兩個特定標頭：
+  - `x-opencode-client: terminal`
+  - `User-Agent: opencode`
+- 缺少這兩個標頭會導致 Codex 出現 `429 FreeUsageLimitError`。
 
-### 1. 安裝 CC Switch
+---
 
-到 <https://github.com/farion1231/cc-switch/releases> 下載 Windows 安裝檔：
+## 🛠️ 手動安裝與管理
 
-- 推薦 `CC-Switch-v{version}-Windows.msi`
-- 或 `CC-Switch-v{version}-Windows-Portable.zip`
+### 1. 前置需求
+- **Node.js 16+**（[官網下載](https://nodejs.org/) 或 Windows 執行 `winget install OpenJS.NodeJS.LTS --silent`）
+- **Git**
 
-### 2. 啟動 zen-header-injector
+### 2. 啟動多 KEY 輪換代理
 
-```powershell
-git clone https://github.com/xup61069/zen-header-injector.git "$HOME\HakkaAICODE\zen-header-injector"
-Set-Location "$HOME\HakkaAICODE\zen-header-injector"
-node server.js
-```
-
-預設會監聽 `http://127.0.0.1:15722`，把 `/v1/*` 轉送到 `https://opencode.ai/zen/v1`。
-
-### 3. 在 CC Switch 加入 OpenCode Zen provider
-
-- Base URL：`http://127.0.0.1:15722/v1`
-- API key：你的 OpenCode Zen 金鑰
-- 模型：從 `-free` 清單挑，例如 `mimo-v2.5-free`
-
-Free 模型清單可用指令確認：
-
-```bash
-curl https://opencode.ai/zen/v1/models
-```
-
-### 4. 切換 provider
-
-在 CC Switch 把 provider 啟用給 Codex 或 Claude Code，再重開對應的終端機。
-
-## 自動化腳本
-
-Windows 使用者可以試跑：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install-zen-windows.ps1
-```
-
-這個腳本會處理 zen-header-injector 的下載與背景啟動，並嘗試下載 CC Switch 的 Windows portable 版。詳見 [scripts/install-zen-windows.ps1](scripts/install-zen-windows.ps1)。
-
-### 多 KEY 自動輪換（免費額度一直被 429 用光時）
-
-如果單一把 key 動不動就被 `429` 限流，可以多準備幾把 key，讓 injector 自動輪換：
-
+**Windows (PowerShell):**
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\setup-multikey.ps1
 ```
 
-1. 腳本會把多 KEY 版 injector（`scripts/server-multikey.js`）放進 `zen-header-injector` 目錄並重啟。
-2. 第一次執行會建立 `zen-keys.txt` 模板，**請自己把 key 一行一把貼進去**（不要把這個檔案 commit 或外流）。
-3. 某把 key 回 `429`/`401` 時，自動切下一把；被限流的 key 會冷卻退避（60 秒起、逐次加倍、最多 30 分鐘）。
+**macOS / Linux / WSL (Bash):**
+```bash
+chmod +x ./scripts/setup-multikey.sh
+./scripts/setup-multikey.sh
+```
 
-> 提醒：Zen 免費額度是「共用」配額。如果整個免費池都乾了，換幾把 key 都沒用——這是機制能解的上限；額度本身有沒有分帳號計算，以官方公告為準。
+### 3. 設定金鑰 (zen-keys.txt)
+將你的 API Key 貼入使用者目錄底下的 `zen-keys.txt`（每行一把，支援 `#` 註解）：
+- Windows: `%USERPROFILE%\HakkaAICODE\zen-keys.txt`
+- macOS/Linux: `~/HakkaAICODE/zen-keys.txt`
 
-## 免費 AI 路線
+```text
+# 每行一把 OpenCode Zen 金鑰
+sk-zen-abcdef123456...
+sk-zen-789xyz456123...
+```
+> 🔔 **熱重載特性**：儲存檔案後，運作中的代理伺服器會自動載入最新金鑰，不需重啟！
 
-持續收集可以合法免費/低門檻開始用的路線：
+### 4. 查詢可用免費模型
+執行專案內建的檢測工具：
+```bash
+node scripts/check-models.js
+```
+輸出範例：
+```text
+📦 資料來源: 本地代理 (http://127.0.0.1:15722/v1/models)
+✨ 發現免費模型 (-free): 6 個
 
-- OpenCode Zen 免費模型：`https://opencode.ai/zen/v1` + zen-header-injector
-- OpenRouter 的 `:free` 模型：<https://openrouter.ai/models?q=:free>
-- GitHub Models：<https://github.com/marketplace/models>
-- Gemini API 免費層：<https://ai.google.dev/gemini-api/docs/pricing>
-- Cloudflare Workers AI：<https://developers.cloudflare.com/workers-ai/>
-- Groq 免費額度：<https://console.groq.com/>
+--------------------------------------------------------
+ 🆓 免費模型推薦清單
+--------------------------------------------------------
+  1. deepseek-v4-flash-free         (擁有者: opencode)
+  2. mimo-v2.5-free                 (擁有者: opencode)
+  3. nemotron-3.5-lightning-free    (擁有者: opencode)
+  4. hy3-free                       (擁有者: opencode)
+  5. nemotron-3-ultra-free          (擁有者: opencode)
+  6. laguna-s-2.1-free              (擁有者: opencode)
+```
 
-更完整的筆記放在 [docs/opencode-zen.md](docs/opencode-zen.md)，之後會繼續補。
+### 5. 檢測代理健康狀態
+在瀏覽器或終端機存取 `http://127.0.0.1:15722/__health`：
+```bash
+curl http://127.0.0.1:15722/__health
+```
 
-## 安全提醒
+---
 
-- 不要把金鑰寫進 repo 或公開檔案。
-- 只把本地 proxy 綁在 `127.0.0.1`，不要開到區網。
-- 若上游回 `429`，通常是免費共用額度真的到頂了，休息一下再試；也可以直接去辦新帳號，但請先確認上游服務條款允許多帳號，避免被判定濫用。
+## 🌐 2026 免費與平價 AI 路線矩陣
 
-## License
+除了 OpenCode Zen，我們也整理了其他主流合法免費/低門檻方案：
 
-MIT
+| 平台 | 適用情境 | 推薦模型 | 提示詞與指南 |
+| :--- | :--- | :--- | :--- |
+| **OpenCode Zen** | 日常主力 Coding | `deepseek-v4-flash-free`<br>`mimo-v2.5-free` | [Prompts](prompts/setup-opencode-zen.md) / [Docs](docs/opencode-zen.md) |
+| **OpenRouter Free** | 多樣化開源模型 | `deepseek/deepseek-chat:free`<br>`meta-llama/llama-3.3-70b-instruct:free` | [Prompts](prompts/setup-openrouter-free.md) |
+| **Google AI Studio** | 超大上下文 / 專案重構 | `gemini-2.5-flash`<br>`gemini-2.5-flash-lite` | [Prompts](prompts/setup-gemini-free.md) |
+| **GitHub Models** | 旗艦商用模型體驗 | `gpt-4o`<br>`gpt-4o-mini` | [Prompts](prompts/setup-github-models.md) |
+
+完整分析請參閱 📄 [2026 免費與平價 AI Coding 指南](docs/free-ai-tiers.md)。
+
+---
+
+## ❓ 常見問題 (FAQ)
+
+<details>
+<summary><b>Q1: 為什麼執行時出現 429？換了 Key 還是一樣？</b></summary>
+OpenCode Zen 的免費額度是社群共用池。如果整個時段官方免費配額皆已滿載，多 KEY 輪換亦無法突破上游極限。建議稍後重試，或切換至 OpenRouter Free 或 Google AI Studio 免費層。
+</details>
+
+<details>
+<summary><b>Q2: 端口 15722 被佔用 (EADDRINUSE) 怎麼辦？</b></summary>
+重新執行 <code>setup-multikey.ps1</code>（或 <code>setup-multikey.sh</code>），腳本會自動終止舊進程並重新啟動。你也可以設定環境變數自訂端口：<br>
+<code>$env:ZEN_INJECTOR_PORT=15723; node scripts/server-multikey.js</code>
+</details>
+
+<details>
+<summary><b>Q3: Key 會不會有洩漏風險？</b></summary>
+本專案為 100% 本地運行的開源代理，服務只監聽本機 <code>127.0.0.1</code>，絕不對外開放網段。金鑰檔 <code>zen-keys.txt</code> 已列入 <code>.gitignore</code>，健康檢查端點也會自動將金鑰進行遮蔽處理。
+</details>
+
+---
+
+## 🤝 貢獻與反饋
+
+歡迎提交 Issue 與 Pull Request！若有新發現的優質免費後端或改進建議，歡迎交流分享。
+
+## 📜 授權條款
+
+本專案基於 [MIT License](LICENSE) 開源。
