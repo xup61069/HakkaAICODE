@@ -22,6 +22,7 @@
 | :--- | :--- | :---: | :--- |
 | **🚀 Google Antigravity (AGY)** | 頂級 Agentic IDE / CLI | ⭐⭐⭐⭐⭐ | **Google DeepMind 打造的次世代 Agent 環境**！內建 Planning Mode 架構規劃、Subagents 多代理分工、Artifacts 成果畫布與完整終端操作權限。可直接串接 Gemini 3.1 / 2.5 免費層或自訂 OpenAI 端點。 |
 | **🤖 Roo Code (前 Roo Cline) / Cline** | VS Code 開源外掛 | ⭐⭐⭐⭐⭐ | **100% 開源無拘束**！完全自主掌控 Provider，可直接填入本專案代理端點 (`http://127.0.0.1:15722/v1`)、Mistral Codestral 或 OpenRouter 免費模型，支援自訂 MCP 工具與模式切換。 |
+| **🧠 OpenManus / Manus** | 自主通用 Agent | ⭐⭐⭐⭐⭐ | **熱門通用自主代理**！具備多步任務規劃、瀏覽器自動化（Browser-Use）、代碼撰寫與終端執行能力。可使用開源版 [OpenManus](prompts/setup-openmanus.md) 直接對接 HakkaAICODE 免費代理或 Codestral。 |
 | **⚡ Cursor** | AI 原生 IDE | ⭐⭐⭐⭐⭐ | 業界指標級 AI IDE，擁有無敵流暢的 Tab 智慧補全與 Composer 多檔案聯動編輯，提供 Free / Hobby 免費體驗。 |
 | **🌊 Windsurf (Cognition)** | AI 原生 IDE | ⭐⭐⭐⭐⭐ | 搭載 Cascade 流程感知對話引擎，對整個 Codebase 理解極深，免費版提供充裕的智慧代碼補全與對話配額。 |
 | **⌨️ Claude Code / Codex** | 終端原生 Agent | ⭐⭐⭐⭐ | 終端命令列最愛！純終端運作、原生 Git/Shell 深度整合，搭配本專案的一鍵 Prompt 立即起飛。 |
@@ -96,7 +97,7 @@ OPEN_CODE_ZEN_KEYS=可選，多 KEY 自動輪換用；有多把 key 就一行一
 7. 完成後列出：CC Switch 安裝位置、injector 運行狀態、設定檔改了哪裡、zen-keys.txt 裡有幾把 key。
 ```
 
-> 💡 更多後端提示詞請參閱 [prompts/](prompts/) 目錄（[Mistral Codestral](prompts/setup-mistral-codestral.md) / [OpenRouter](prompts/setup-openrouter-free.md) / [Google Gemini](prompts/setup-gemini-free.md) / [NVIDIA NIM](prompts/setup-nvidia-nim.md) / [GLM Coding Plan](prompts/setup-glm-coding-plan.md) / [GitHub Models (已退役)](prompts/setup-github-models.md)）。
+> 💡 更多後端與 Agent 提示詞請參閱 [prompts/](prompts/) 目錄（[OpenManus](prompts/setup-openmanus.md) / [Mistral Codestral](prompts/setup-mistral-codestral.md) / [OpenRouter](prompts/setup-openrouter-free.md) / [Google Gemini](prompts/setup-gemini-free.md) / [NVIDIA NIM](prompts/setup-nvidia-nim.md) / [GLM Coding Plan](prompts/setup-glm-coding-plan.md) / [GitHub Models (已退役)](prompts/setup-github-models.md)）。
 
 ---
 
