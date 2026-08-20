@@ -67,7 +67,7 @@ flowchart TD
 - 要求 AI：「**僅輸出 Unified Diff 或 Search/Replace Block**」，速度提升 5 倍且省下大量輸出 Token。
 
 ### 4. 🔄 「多 Key 輪換 + 多級備援防線」
-- **第一防線**：Mistral Codestral 免費層（30 RPM 專用 Coding API）與 OpenCode Zen（搭配本專案 `server-multikey.js` 支援原地無感重試）。
+- **第一防線**：Mistral Codestral 免費層（約 1 RPS / 500k TPM 專用 Coding API）與 OpenCode Zen（搭配本專案 `server-multikey.js` 支援原地無感重試）。
 - **第二防線**：OpenRouter `:free` 系列（儲值 $10 升級 1,000 req/day 配額）與 NVIDIA NIM（~40 RPM 免費推論）。
 - **第三防線**：Google AI Studio Gemini 免費層（超大上下文，專治大專案重構）。
 - **第四防線（超低價 Overflow）**：DeepSeek V3/V4 直連或智譜 GLM Coding Plan。

@@ -32,6 +32,6 @@ ZAI_API_KEY=你的 Z.AI API KEY（至 https://z.ai/subscribe 訂閱 Coding Plan 
 ---
 
 ## 備註
-- **什麼人該買**：每天 coding agent 用量超過免費層總和（Zen 100 次 + OpenRouter 50 次 + Codestral 2,000 次還不夠）的人。
+- **什麼人該買**：每天 coding agent 用量超過免費層總和（Zen 100 次 + OpenRouter 50 次 + Codestral 等免費額度還不夠）的人。
 - **與免費層混用**：日常互動走 GLM Coding Plan，批次排程任務走 DeepSeek API 按量計費（$0.14/$0.28 per 1M tokens，cache hit 只要 $0.0028），兩者互補最便宜。
 - GLM-5.x 是開放權重模型（MIT license），重視隱私也可考慮自架。

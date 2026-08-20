@@ -73,7 +73,7 @@ AI Coding 工具在對話時，每一輪都會把「所有對話紀錄 + 打開�
 透過本專案的 `scripts/server-multikey.js`，你可以建立流暢的免費與平價算力防線：
 
 1. **第一防線（Mistral Codestral & OpenCode Zen）**：
-   - Codestral 提供專用 30 RPM 免費額度。
+   - Codestral Experiment 方案提供約 1 RPS / 500k TPM 免費額度。
    - Zen 免費池（搭配 HakkaAICODE `server-multikey.js` 支援原地無感重試）。
 2. **第二防線（OpenRouter Free & NVIDIA NIM）**：
    - OpenRouter 儲值 $10 即可享受每日 1,000 次 `:free` 模型調用。

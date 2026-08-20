@@ -1,6 +1,6 @@
-# Mistral Codestral 免費層配置提示詞（新增）
+# Mistral Codestral 免費層配置提示詞
 
-Mistral 的 Codestral 是**專門為程式碼任務訓練**的模型，免費層約 **30 RPM / 每日 2,000 次請求**，是目前免費 API 中最適合接 coding agent 的選項之一，也是原 repo 完全漏掉的好貨。
+Mistral 的 Codestral 是**專門為程式碼任務訓練**的模型，免費層（Experiment Plan）提供約 **1 RPS (~60 RPM) / 500,000 TPM** 的免費配額，是目前免費 API 中最適合接 coding agent 的選項之一。
 
 > ⚠️ 注意：
 > 1. Codestral 有兩個端點：通用的 `https://api.mistral.ai/v1` 與程式碼專用的 `https://codestral.mistral.ai/v1`，以你的 agent 支援的協定為準。
@@ -33,4 +33,5 @@ MISTRAL_API_KEY=你的 MISTRAL API KEY（至 https://console.mistral.ai/ 註冊�
 
 ## 備註
 - Codestral 的 **FIM（fill-in-the-middle）補全**特別強，拿來接 IDE autocomplete 比一般 chat 模型順手。
-- 每日 2,000 次請求對個人開發者相當充裕，可當 OpenCode Zen 免費池乾掉時的第一備援。
+- 免費層配額對個人日常開發相當充裕，可當 OpenCode Zen 免費池乾掉時的第一備援。
+- CC Switch 官方下載：可從 [GitHub Releases](https://github.com/farion1231/cc-switch/releases) 或官網 [ccswitch.io](https://ccswitch.io) 下載。

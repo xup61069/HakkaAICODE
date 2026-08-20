@@ -18,7 +18,7 @@
 | 平台 | 額度（以官方為準） | 資料用於訓練？ | 適合場景 |
 |---|---|:---:|---|
 | OpenCode Zen `-free` 模型 | 約 100 次/日，免信用卡 | ⚠️ 可能 | 日常 coding 主力（需搭配 injector，注意 ToS 風險） |
-| Mistral Codestral | 約 30 RPM、2,000 次/日 | ⚠️ 可能 | **coding 專用**，agent 第一備援 |
+| Mistral Codestral | 約 1 RPS (~60 RPM) / 500k TPM（Experiment 方案） | ⚠️ 可能 | **coding 專用**，agent 第一備援 |
 | Google AI Studio | 依模型而異（Flash 系列每日數十～上千次） | ⚠️ 免費層會 | 1M+ 超大 context、整專案重構 |
 | OpenRouter `:free` | 50 次/日；儲值 $10 終身升 1,000 次/日 | ⚠️ 可能 | 模型選擇最多的單一入口 |
 | NVIDIA NIM | 約 40 RPM | 以官方條款為準 | 開源模型齊全，需手機驗證 |
@@ -54,7 +54,7 @@
 ## 三級備援架構（更新版）
 
 1. **主力**：OpenCode Zen 免費池（注意 ToS 風險）或 GLM Coding Plan（付費但穩）
-2. **第一備援**：Mistral Codestral 免費層（coding 專用、每日 2,000 次）
+2. **第一備援**：Mistral Codestral 免費層（coding 專用、Experiment 方案）
 3. **第二備援**：OpenRouter `:free`（儲值 $10 解鎖 1,000 次/日）
 4. **大 context 專用**：Google AI Studio（1M+ tokens）
 5. **overflow**：DeepSeek API 按量計費（先儲 $5，開啟用量警示）

@@ -24,7 +24,7 @@
    - 檢查是否安裝 CC Switch（https://github.com/farion1231/cc-switch），若無則下載並安裝最新版本。
 
 2. 【自動選擇最優免費後端路徑】：
-   - 若提供了 MISTRAL_API_KEY：優先配置 Mistral Codestral（端點: https://api.mistral.ai/v1，模型: codestral-latest，30 RPM / 2,000 次每日請求，專門為代碼優化）。
+   - 若提供了 MISTRAL_API_KEY：優先配置 Mistral Codestral（端點: https://api.mistral.ai/v1，模型: codestral-latest，Experiment 方案提供約 1 RPS / 500k TPM 免費額度，專為代碼優化）。
    - 若要使用 OpenCode Zen（或已提供 Zen Key）：
      * 下載並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），採用多 KEY 原地重試版 scripts/server-multikey.js 啟動。
      * 若有多把 Key，寫入使用者目錄下的 zen-keys.txt（不要 commit、不要外流）。
@@ -47,7 +47,7 @@
 
 | 後端名稱 | 適用情境 | 免費/平價優勢 | 專屬獨立 Prompt |
 | :--- | :--- | :--- | :--- |
-| **Mistral Codestral** | 日常主力代碼編寫、補全 | 30 RPM / 每日約 2,000 次請求（代碼專用） | [Codestral 獨立指南](setup-mistral-codestral.md) |
+| **Mistral Codestral** | 日常主力代碼編寫、補全 | 約 1 RPS (~60 RPM) / 500k TPM（代碼專用） | [Codestral 獨立指南](setup-mistral-codestral.md) |
 | **OpenCode Zen** | 日常主力 Coding | 每日約 100 次，免綁卡，支援多 KEY 原地無感重試 | [Zen 獨立指南](setup-opencode-zen.md) |
 | **OpenRouter Free** | 多樣化開源模型 | 儲值 $10 解鎖每日 1,000 次免費模型調用 | [OpenRouter 獨立指南](setup-openrouter-free.md) |
 | **Google AI Studio** | 超大 Context / 專案重構 | 1M+ tokens 超大視窗，速度極快 | [Gemini 獨立指南](setup-gemini-free.md) |
