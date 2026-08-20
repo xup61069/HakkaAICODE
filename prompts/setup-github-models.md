@@ -1,26 +1,24 @@
-# GitHub Models 免費額度配置提示詞
+# ⚠️ GitHub Models 已停止服務（RETIRED）
 
-GitHub 提供開發者透過 GitHub Personal Access Token (PAT) 免費使用 GitHub Models 上的前沿模型（包括 OpenAI GPT-4o、Meta Llama 3.3、Mistral、DeepSeek 等，不包含 Anthropic Claude 系列）。
+**GitHub Models 已於 2026 年 7 月 30 日全面退役**，playground、模型目錄、inference API、BYOK 全部關閉。此提示詞檔案保留僅作歷史紀錄，**請勿再使用**。
 
----
+## 時間線
+| 日期 | 事件 |
+|---|---|
+| 2025-07-17 | 舊端點 `models.inference.ai.azure.com` 棄用，遷移至 `models.github.ai` |
+| 2025-10-17 | 舊端點停止支援 |
+| 2026-06-16 | 停止新用戶註冊 |
+| 2026-07-16 / 07-23 | 兩次計畫性 brownout |
+| 2026-07-30 | **全面關閉，無任何繼任服務** |
 
-## 複製以下提示詞：
+## 原文件的其他錯誤（順帶糾正）
+- 原提示詞聲稱 GitHub Models 提供「Claude 3.5 Sonnet」——**從未上架過**，該目錄是 Azure AI 托管的 OpenAI / Meta / Mistral / DeepSeek / xAI 模型。
+- 原 endpoint `models.inference.ai.azure.com` 在 2025-10 後就已失效。
 
-```text
-請幫我將這台電腦的 AI coding 環境（Claude Code / Codex / Roo Code）設定為使用 GitHub Models 的免費額度後端。
-
-GITHUB_TOKEN=你的 GITHUB 個人存取權杖 (至 https://github.com/settings/tokens 申請，需具備基本存取權限)
-
-請自動完成以下項目：
-1. 若尚未提供權杖，請引導我開啟 https://github.com/settings/tokens 建立 Personal Access Token (Classic 或 Fine-grained)。
-2. 協助我在 CC Switch 或環境變數中設定 GitHub Models Provider：
-   - Base URL: https://models.github.ai/inference
-   - API Key: (我所提供的 GITHUB_TOKEN)
-   - 常用模型:
-     * gpt-4o
-     * gpt-4o-mini
-     * Meta-Llama-3.3-70B-Instruct
-     * Mistral-large-2411
-     * DeepSeek-R1
-3. 驗證連線是否正常，並列出設定摘要。
-```
+## 替代方案
+| 原用途 | 替代 |
+|---|---|
+| 免費模型試用 | OpenRouter `:free` 模型（見 setup-openrouter-free.md） |
+| 免費 coding API | Mistral Codestral 免費層（見 setup-mistral-codestral.md） |
+| GitHub 生態整合 | GitHub Copilot（付費訂閱，與 GitHub Models 是不同服務） |
+| 正式生產遷移 | Azure AI Foundry（OpenAI 相容，prompt 可直接搬移） |

@@ -96,7 +96,7 @@ OPEN_CODE_ZEN_KEYS=可選，多 KEY 自動輪換用；有多把 key 就一行一
 7. 完成後列出：CC Switch 安裝位置、injector 運行狀態、設定檔改了哪裡、zen-keys.txt 裡有幾把 key。
 ```
 
-> 💡 更多後端提示詞請參閱 [prompts/](prompts/) 目錄（[OpenRouter](prompts/setup-openrouter-free.md) / [GitHub Models](prompts/setup-github-models.md) / [Google Gemini](prompts/setup-gemini-free.md)）。
+> 💡 更多後端提示詞請參閱 [prompts/](prompts/) 目錄（[Mistral Codestral](prompts/setup-mistral-codestral.md) / [OpenRouter](prompts/setup-openrouter-free.md) / [Google Gemini](prompts/setup-gemini-free.md) / [NVIDIA NIM](prompts/setup-nvidia-nim.md) / [GLM Coding Plan](prompts/setup-glm-coding-plan.md) / [GitHub Models (已退役)](prompts/setup-github-models.md)）。
 
 ---
 
