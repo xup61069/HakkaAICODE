@@ -1,66 +1,100 @@
-# OpenCode Zen 免費後端筆記
+# OpenCode Zen 免費後端技術筆記
 
-OpenCode Zen 的免費額度 endpoint 是：
+OpenCode Zen 的官方免費端點是：
 
 ```text
 https://opencode.ai/zen/v1
 ```
 
-zen-header-injector 把它包成本地端點：
+zen-header-injector 把它封裝成本地轉發端點：
 
 ```text
 http://127.0.0.1:15722/v1
 ```
 
-## 註冊與拿金鑰
+---
 
-1. 打開 <https://opencode.ai/auth>。
-2. 選擇註冊或登入方式。
-3. 登入後到 API keys / Dashboard，依照官方流程完成必要設定（部分畫面會要求付款資料），複製 API key。
-4. 把 API key 存進 CC Switch 的 provider 欄位，或貼進客家AICODE 的提示詞。
+## 註冊與獲取認證
+
+1. 可透過官方 CLI 執行 `opencode auth login`，或前往 <https://opencode.ai> 登入。
+2. 登入後至 Dashboard / API Keys 頁面取得認證金鑰。
+3. 將金鑰寫入本機 `%USERPROFILE%\HakkaAICODE\zen-keys.txt`（每行一把）。
 
 官方文件：<https://opencode.ai/docs/zen/>
 
-## 目前可查到的模型
+---
+
+## 快速檢測模型與端點健康
+
+免費模型名稱隨官方政策隨時調整，**請以即時查詢腳本為準**：
 
 ```bash
-curl https://opencode.ai/zen/v1/models
+# 查看本地代理健康狀態與免費模型清單
+node scripts/check-models.js
+
+# 查看所有可用模型（含非免費模型）
+node scripts/check-models.js --all
 ```
 
-`-free` 結尾的模型是免費額度。其他模型會走付費或 Go endpoint，請自己看官方定價。
+`-free` 結尾的模型屬於免費配額模型。
 
-## 為什麼要 zen-header-injector
+---
 
-CC Switch 這類轉送代理會重新組裝請求，不會原封不動帶走 OpenCode Zen 需要的兩個標頭：
+## 為什麼需要 zen-header-injector 與 ToS 聲明
+
+CC Switch 或一般代理工具在轉發請求時會重組 Header，缺少 OpenCode Zen 免費方案所要求的兩個特定標頭：
 
 - `x-opencode-client: terminal`
 - `User-Agent: opencode`
 
-zen-header-injector 在轉送時把這兩個標頭補回去，解決 Codex 透過 CC Switch 使用 Zen 免費模型時的 `429 FreeUsageLimitError`。
+zen-header-injector 會在轉送時補齊這兩個標頭，以解決使用 Zen 免費模型時的 `429 FreeUsageLimitError`。
 
-## 多 KEY 自動輪換
+> ⚠️ **服務條款與風險揭露**：  
+> 注入上述標頭本質上是向服務端宣告自身為官方終端客戶端以獲取終端專屬免費額度。此機制可能處於上游服務條款之邊界地帶，隨時有被官方調整或限制之風險，請使用者自行評估。
 
-單一把 key 一直被 `429` 擋時，可以準備多把 key，由 injector 自動輪換：
+---
 
-1. 執行 `scripts/setup-multikey.ps1`，它會把 `scripts/server-multikey.js` 部署進 `zen-header-injector` 目錄並重啟。
-2. 把 key 一行一把貼進 `zen-keys.txt`（預設 `%USERPROFILE%\HakkaAICODE\zen-keys.txt`，支援 `#` 註解）。這個檔案不要 commit、不要外流。
-3. 之後 injector 收到 `429`（或 `401`）時會自動切到下一把 key；被限流的 key 冷卻退避 60 秒起、逐次加倍、最多 30 分鐘。
+## 真·無感原地輪換（In-Place Retry）與熱重載
 
-只改 env 也可以，不一定要用檔案：`ZEN_INJECTOR_KEYS="k1,k2,k3"`。
+本專案升級後的 `server-multikey.js` 提供完整的容錯機制：
 
-`server-multikey.js` 是原版 `server.js` 的超集——沒有設定任何 key 時行為跟原版一模一樣，可以放心整份換掉。
+1. **原地無感重試**：當 upstream 回傳 `429`（限流）或 `401`（無效金鑰）時，代理伺服器會在內部使用下一把可用 Key 重新發送請求，客戶端不會直接報錯中斷。
+2. **401 與 429 差異化處理**：
+   - `401 Unauthorized`：視為無效/被撤銷金鑰（標記為 Dead，冷卻 24 小時），避免重複浪費請求。
+   - `429 Too Many Requests`：標記該 Key 冷卻（60 秒起、指數退避至最多 30 分鐘）；一旦請求成功（HTTP < 400），立即重置連續錯誤計數。
+3. **即時熱重載**：修改 `zen-keys.txt` 存檔後自動熱重載金鑰，無需重啟 Node 進程。
+4. **配額本質說明**：
+   - 多 KEY 輪換適用於應對單一金鑰/帳號的速率限制。若上游整體免費池全線滿載，輪換亦無法產生新配額，此時建議切換至 [docs/free-ai-tiers.md](free-ai-tiers.md) 收錄之 Codestral、OpenRouter 或 Google Gemini 等替代方案。
 
-> 注意：Zen 免費額度是**共用**配額，多 KEY 輪換解的是「單一 key 被限流」這類問題。如果整個免費池真的乾了，輪換並不會變出額度，這點請以官方實際行為為準。
+---
 
-## 已知的使用提醒
+## 代理健康與狀態檢查端點
 
-- 免費額度是共用配額，不是「無限」。
-- 如果回 `429`，通常代表該時段免費額度已用滿；可以休息一下再試，或使用上面的多 KEY 輪換，或直接去辦新帳號（先確認上游服務條款允許，避免被判定濫用）。
-- 圖片支援以實際模型回應為準；`sync-free-models.py` 會把能力表寫回 Codex 的模型目錄。
-- 付費模型不需要這個 header injector。
+可在瀏覽器或終端機存取：
 
-## 相關工具
+```bash
+curl http://127.0.0.1:15722/__health
+```
 
-- <https://github.com/xup61069/zen-header-injector>
-- <https://github.com/farion1231/cc-switch>
-- <https://opencode.ai>
+回傳範例：
+```json
+{
+  "status": "ok",
+  "uptimeSeconds": 180,
+  "totalRequests": 12,
+  "totalRotations": 1,
+  "totalRetriesSucceeded": 1,
+  "keys": {
+    "total": 3,
+    "ready": 2,
+    "cooling": 1,
+    "dead": 0,
+    "currentIndex": 2,
+    "details": [
+      { "index": 1, "maskedKey": "sk-6...ZTLn", "status": "ready" },
+      { "index": 2, "maskedKey": "sk-x...yNPR", "status": "ready" },
+      { "index": 3, "maskedKey": "sk-Q...jRHI", "status": "cooling", "coolingRemainingSeconds": 54 }
+    ]
+  }
+}
+```

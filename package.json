@@ -1,0 +1,32 @@
+{
+  "name": "hakka-aicode",
+  "version": "2.0.0",
+  "description": "客家 AICODE - 給開發者的免費/低成本 AI & Vibe Coding 啟動包與多 KEY 轉發代理",
+  "main": "scripts/server-multikey.js",
+  "scripts": {
+    "start": "node scripts/server-multikey.js",
+    "test": "node test/test-proxy.js",
+    "check-models": "node scripts/check-models.js",
+    "check-models:all": "node scripts/check-models.js --all",
+    "check-models:json": "node scripts/check-models.js --json"
+  },
+  "keywords": [
+    "ai-coding",
+    "vibe-coding",
+    "opencode",
+    "zen",
+    "claude-code",
+    "codex",
+    "roo-code",
+    "cline",
+    "antigravity",
+    "cursor",
+    "proxy",
+    "free-tier"
+  ],
+  "author": "HakkaAICODE Contributors",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

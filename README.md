@@ -1,134 +1,203 @@
-# 客家AICODE
+# 🍜 客家 AICODE (HakkaAICODE)
 
-客家 AICODE 是一個給新手用的 AI coding 啟動包。目標很簡單：複製一段短提示詞到 Claude Code 或 Codex，貼上 OpenCode Zen 的金鑰，讓 agent 自動把 CC Switch 和 [zen-header-injector](https://github.com/xup61069/zen-header-injector) 裝好，再用免費額度開始寫程式。
+<div align="center">
 
-第一次使用：先到 <https://opencode.ai/auth> 拿 OpenCode Zen 的 API key，再把下面的提示詞貼給 Claude Code 或 Codex。金鑰是本人帳號的一部分，註冊步驟不能由 agent 全自動代辦，但貼上金鑰之後的安裝與設定可以全部自動完成。
+> **「省下每一分算力，用好每一份免費額度。」**  
+> 一個專為開發者打造的 **AI / Vibe Coding 免費神器推薦、極限省額度攻略與後端啟動套件**。
 
-## 快速開始（提示詞）
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI Tests](https://github.com/xup61069/HakkaAICODE/actions/workflows/test.yml/badge.svg)](https://github.com/xup61069/HakkaAICODE/actions)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](#)
+[![Node.js](https://img.shields.io/badge/Node.js-16%2B-green.svg)](#)
+[![Status](https://img.shields.io/badge/Status-Maintained-brightgreen.svg)](#)
 
-把下面的 `你的 OPENCODE ZEN KEY` 換成自己的金鑰，整段複製貼到 Claude Code 或 Codex：
+</div>
+
+---
+
+## 🌟 🔥 2026 頂級免費與平價 Vibe Coding 神器推薦
+
+想要體驗最流暢的 **Vibe Coding**（自然語言定義意圖與架構，AI 自主搬磚實作代碼）？以下是社群評價最高、支援免費/低成本方案的開發工具：
+
+| 工具名稱 | 工具類型 | 推薦指數 | 核心特色與免費搭配方案 |
+| :--- | :--- | :---: | :--- |
+| **🚀 Google Antigravity (AGY)** | 頂級 Agentic IDE / CLI | ⭐⭐⭐⭐⭐ | **Google DeepMind 打造的次世代 Agent 環境**！內建 Planning Mode 架構規劃、Subagents 多代理分工、Artifacts 成果畫布與完整終端操作權限。可直接串接 Gemini 3.1 / 2.5 免費層或自訂 OpenAI 端點。 |
+| **🤖 Roo Code (前 Roo Cline) / Cline** | VS Code 開源外掛 | ⭐⭐⭐⭐⭐ | **100% 開源無拘束**！完全自主掌控 Provider，可直接填入本專案代理端點 (`http://127.0.0.1:15722/v1`)、Mistral Codestral 或 OpenRouter 免費模型，支援自訂 MCP 工具與模式切換。 |
+| **🧠 OpenManus / Manus** | 自主通用 Agent | ⭐⭐⭐⭐⭐ | **熱門通用自主代理**！具備多步任務規劃、瀏覽器自動化（Browser-Use）、代碼撰寫與終端執行能力。可使用開源版 [OpenManus](prompts/setup-openmanus.md) 直接對接 HakkaAICODE 免費代理或 Codestral。 |
+| **⚡ Cursor** | AI 原生 IDE | ⭐⭐⭐⭐⭐ | 業界指標級 AI IDE，擁有無敵流暢的 Tab 智慧補全與 Composer 多檔案聯動編輯，提供 Free / Hobby 免費體驗。 |
+| **🌊 Windsurf (Cognition)** | AI 原生 IDE | ⭐⭐⭐⭐⭐ | 搭載 Cascade 流程感知對話引擎，對整個 Codebase 理解極深，免費版提供充裕的智慧代碼補全與對話配額。 |
+| **⌨️ Claude Code / Codex** | 終端原生 Agent | ⭐⭐⭐⭐ | 終端命令列最愛！純終端運作、原生 Git/Shell 深度整合，搭配本專案的一鍵 Prompt 立即起飛。 |
+| **🌐 Continue.dev / Void Editor** | 開源 VS Code 插件 / IDE | ⭐⭐⭐⭐ | 隱私優先、完全開源透明，支援在 本機 Ollama / HakkaAICODE 代理 / 雲端 API 之間無縫任意切換。 |
+| **⚡ v0 / Bolt.new / Lovable** | Web 快速原型 | ⭐⭐⭐⭐ | 自然語言一鍵生成 Fullstack 網頁與 React 元件，適合靈感驗證與快速前端出圖。 |
+
+---
+
+## 🧠 💡 客家頂級省額度心法 (Vibe Coding 算力利用率最大化)
+
+> **「不要拿重砲打蚊子，也不要讓小兵做大架構決策。」**  
+> 懂得調配大腦與苦工模型，你的免費額度能多寫 10 倍代碼！
+
+```mermaid
+flowchart TD
+    A["👑 大腦 (The Brain)<br>Claude 3.7 Sonnet / Claude Opus / DeepSeek R1 / Gemini 3.1 Pro / GPT-4o"] -->|1. 釐清需求、架構選型| B["📋 產出 implementation_plan.md"]
+    B -->|2. 拆解為具體小步驟清單| C["💪 苦工 (The Muscle)<br>Gemini 2.5 Flash Lite / Mistral Codestral / DeepSeek Flash Free / Qwen Coder"]
+    C -->|3. 依照清單逐檔實作代碼| D["🛠️ 本機執行測試 (Terminal)"]
+    D -->|4. 關鍵節點/最後驗收| E["🎯 大腦審查交付 (省下 85%+ 昂貴配額)"]
+```
+
+### 1. 🎯 「大腦規劃，苦工打底」模型分工術 (Tiered Brain & Muscle)
+- **第一步：大腦規劃（The Brain）**
+  - **選用模型**：`Claude 3.7 Sonnet (Thinking)`、`Claude Opus 4.8`、`DeepSeek R1`、`Gemini 3.1 Pro`、`GPT-4o`。
+  - **任務**：深度理解需求、分析技術架構、產出任務清單與 `implementation_plan.md`。
+  - **重點**：**只讓大腦做決策與寫架構規格，不要讓大腦逐行輸出幾千行代碼**。
+- **第二步：苦工實作（The Muscle）**
+  - **選用模型**：`Gemini 2.5 Flash Lite`、`Mistral Codestral`、`deepseek-v4-flash-free`、`qwen-2.5-coder-32b-instruct`。
+  - **任務**：拿著大腦規劃好的 Step 1~Step 5 清單，**讓它慢慢寫、逐檔填寫實現代碼**。
+- **第三步：大腦驗收（The Critic）**
+  - 遇到複雜卡關或全部寫完時，再切回大腦模型做一次性 Code Review 與邊界檢查。
+- 💸 **省額度效果**：品質等同全旗艦大模型，但節省高達 **80% ~ 90%** 的珍貴額度！
+
+### 2. 🧹 「Context 瘦身術」避免 Token 滾雪球
+- AI 每輪對話都會重複發送全部歷史與開啟的檔案。對話到第 15 輪，每次隨便問一句話就要消耗數萬 Tokens！
+- **客家作法**：每完成一個獨立功能或修好一個 Bug，立刻 `/clear` 或開新對話（New Session），讓 AI 在乾淨輕量的狀態繼續下個任務。
+- **排除雜訊**：設定好 `.gitignore` 或 `.cursorrules`，排除 `node_modules/`、`dist/`、`package-lock.json` 與巨大的 `*.log`。
+
+### 3. ✂️ 「增量 Diff 補丁」拒絕全檔覆寫
+- 修改 500 行檔案中的 2 行，全檔重寫會浪費 500 Output Tokens 且生成極慢。
+- 要求 AI：「**僅輸出 Unified Diff 或 Search/Replace Block**」，速度提升 5 倍且省下大量輸出 Token。
+
+### 4. 🔄 「多 Key 輪換 + 多級備援防線」
+- **第一防線**：Mistral Codestral 免費層（30 RPM 專用 Coding API）與 OpenCode Zen（搭配本專案 `server-multikey.js` 支援原地無感重試）。
+- **第二防線**：OpenRouter `:free` 系列（儲值 $10 升級 1,000 req/day 配額）與 NVIDIA NIM（~40 RPM 免費推論）。
+- **第三防線**：Google AI Studio Gemini 免費層（超大上下文，專治大專案重構）。
+- **第四防線（超低價 Overflow）**：DeepSeek V3/V4 直連或智譜 GLM Coding Plan。
+
+> 📖 更多進階省額度技巧請閱讀 📄 [客家 Vibe Coding 終極指南](docs/vibe-coding-guide.md)。
+
+---
+
+## 🚀 快速開始（一鍵配置提示詞）
+
+將以下整段提示詞複製，貼到 **Claude Code**、**Codex**、**Google Antigravity** 或 **Roo Code** 對話框：
 
 ```text
-請依照 https://github.com/xup61069/HakkaAICODE 的 README，把我這台電腦的 AI coding 環境設定成 OpenCode Zen 免費後端。
+請依照 https://github.com/xup61069/HakkaAICODE 的指引，把我這台電腦的 AI coding 環境設定成 OpenCode Zen 免費後端。
 
-OPEN_CODE_ZEN_KEY=你的 OPENCODE ZEN KEY
+OPEN_CODE_ZEN_KEY=你的 OPENCODE ZEN KEY (可透過 opencode auth login 或在 opencode.ai 取得)
+OPEN_CODE_ZEN_KEYS=可選，多 KEY 自動輪換用；有多把 key 就一行一把貼在這裡，沒有就留空
 
-請自動完成：
-1. 如果 OPEN_CODE_ZEN_KEY 還是空值，先開啟 https://opencode.ai/auth 引導我完成註冊/登入並複製金鑰；我貼給你後再繼續。
-2. 如果沒有 CC Switch，先安裝 CC Switch（Windows 用官方最新 release）。
-3. 下載並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），確認 http://127.0.0.1:15722/v1 有回應。
-4. 依照我目前使用的 agent（Claude Code 或 Codex）設定 provider：base URL 指向 http://127.0.0.1:15722/v1，model 選 mimo-v2.5-free（或 API 回傳的最新 -free 模型）。
-5. 不要把我提供的金鑰寫進 repo、log 或任何公開檔案。
-6. 完成後列出：CC Switch 安裝位置、injector 是否在跑、設定檔改了哪裡。
+請自動完成以下項目：
+1. 如果 OPEN_CODE_ZEN_KEY 仍為空，請引導我登入並取得 API 金鑰。
+2. 檢查本機是否安裝 CC Switch，若無則下載並安裝最新版本。
+3. 取得並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），改用多 KEY 原地重試版 scripts/server-multikey.js 啟動，確認 http://127.0.0.1:15722/v1 正常響應。
+4. 如果提供了 OPEN_CODE_ZEN_KEYS，將金鑰寫入 %USERPROFILE%\HakkaAICODE\zen-keys.txt（不要 commit、不要外流），injector 遇 429/401 會自動在 Proxy 內原地無感重試下一把。
+5. 依照我目前使用的 agent（Claude Code / Codex / Roo Code）設定 Provider：
+   - Base URL: http://127.0.0.1:15722/v1
+   - 預設模型: 執行 node scripts/check-models.js 挑選目前可用的 -free 模型
+6. 不要把我提供的金鑰寫進 repo、log 或任何公開檔案。
+7. 完成後列出：CC Switch 安裝位置、injector 運行狀態、設定檔改了哪裡、zen-keys.txt 裡有幾把 key。
 ```
 
-## 註冊 OpenCode Zen（第一次使用）
+> 💡 **想要自動挑選最優路線？** 請使用 📄 **[全能整合式大師提示詞 (All-in-One Master Prompt)](prompts/all-in-one-setup.md)**。  
+> 更多獨立後端提示詞請參閱 [prompts/](prompts/) 目錄（[Mistral Codestral](prompts/setup-mistral-codestral.md) / [OpenRouter](prompts/setup-openrouter-free.md) / [Google Gemini](prompts/setup-gemini-free.md) / [OpenManus](prompts/setup-openmanus.md) / [NVIDIA NIM](prompts/setup-nvidia-nim.md) / [GLM Coding Plan](prompts/setup-glm-coding-plan.md) / [GitHub Models (已退役)](prompts/setup-github-models.md)）。
 
-1. 打開 <https://opencode.ai/auth>，選擇註冊或登入方式（以頁面當下提供的為準）。
-2. 登入後進入 OpenCode Zen 的 API keys 或 Dashboard 頁面。
-3. 依照官方流程完成必要設定（部分畫面會要求付款資料；以官方頁面實際顯示為準），複製 API key。
-4. 回到本 README，把 key 貼進上面提示詞的 `OPEN_CODE_ZEN_KEY=...`。
+---
 
-官方文件：<https://opencode.ai/docs/zen/>
+## 🏗️ 運作架構
 
-> 註冊、付款資料與金鑰只能由你本人完成。自動化能做到的是：你貼上金鑰後，agent 自己安裝 CC Switch、啟動 zen-header-injector、寫好 provider 設定。
-
-## 為什麼這樣設計
-
-- **CC Switch** 負責管理 Claude Code / Codex 的 provider 切換。
-- **zen-header-injector** 負責在 CC Switch 轉送請求時補上 OpenCode Zen 免費方案需要的 `x-opencode-client` 與 `User-Agent` 標頭，避免 Codex 出現 `429 FreeUsageLimitError`。
-- **OpenCode Zen** 提供一批 `-free` 結尾的模型，可從 `https://opencode.ai/zen/v1/models` 即時查詢。
-
-> 這裡只整理「免費額度、官方免費層、或公開免費 endpoint」的使用方法。額度、模型清單與政策隨時可能被上游調整，請以官方公告為準。
-
-## 你需要準備
-
-1. 這台電腦已經能跑 Claude Code 或 Codex。
-2. 一個 OpenCode Zen 金鑰（登入 [opencode.ai](https://opencode.ai) 後從你的帳戶取得，就是拿來當 API key 的那一組）。
-3. Node.js 16 以上。Windows 可以用：
-
-```powershell
-winget install OpenJS.NodeJS.LTS --silent
+```mermaid
+flowchart LR
+    A[Claude Code / Codex / Antigravity / Roo Code] -->|OpenAI 格式請求| B[CC Switch / Local Proxy]
+    B -->|轉發至 127.0.0.1:15722| C[zen-header-injector<br>server-multikey.js]
+    C -->|注入 x-opencode-client & User-Agent<br>+ 原地無感重試 & 熱重載| D[OpenCode Zen<br>https://opencode.ai/zen/v1]
+    D -->|免費模型串流回應| C
+    C -->|串流回傳| A
 ```
 
-## 手動安裝
+### 為什麼需要 zen-header-injector？
+- **CC Switch** 負責管理與快速切換不同 AI Provider。
+- **zen-header-injector** 負責在轉送請求時補齊 OpenCode Zen 免費方案所要求的兩個特定標頭：
+  - `x-opencode-client: terminal`
+  - `User-Agent: opencode`
+- 缺少標頭會導致使用免費模型時出現 `429 FreeUsageLimitError`。
 
-### 1. 安裝 CC Switch
+> ⚠️ **服務條款說明**：注入終端標頭係轉發官方 CLI 標頭以獲取終端免費額度，此機制受上游政策約束，請使用者自行評估使用風險。
 
-到 <https://github.com/farion1231/cc-switch/releases> 下載 Windows 安裝檔：
+---
 
-- 推薦 `CC-Switch-v{version}-Windows.msi`
-- 或 `CC-Switch-v{version}-Windows-Portable.zip`
+## 🛠️ 本機管理與實用指令
 
-### 2. 啟動 zen-header-injector
+### 1. 啟動多 KEY 輪換代理
 
-```powershell
-git clone https://github.com/xup61069/zen-header-injector.git "$HOME\HakkaAICODE\zen-header-injector"
-Set-Location "$HOME\HakkaAICODE\zen-header-injector"
-node server.js
-```
-
-預設會監聽 `http://127.0.0.1:15722`，把 `/v1/*` 轉送到 `https://opencode.ai/zen/v1`。
-
-### 3. 在 CC Switch 加入 OpenCode Zen provider
-
-- Base URL：`http://127.0.0.1:15722/v1`
-- API key：你的 OpenCode Zen 金鑰
-- 模型：從 `-free` 清單挑，例如 `mimo-v2.5-free`
-
-Free 模型清單可用指令確認：
-
-```bash
-curl https://opencode.ai/zen/v1/models
-```
-
-### 4. 切換 provider
-
-在 CC Switch 把 provider 啟用給 Codex 或 Claude Code，再重開對應的終端機。
-
-## 自動化腳本
-
-Windows 使用者可以試跑：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install-zen-windows.ps1
-```
-
-這個腳本會處理 zen-header-injector 的下載與背景啟動，並嘗試下載 CC Switch 的 Windows portable 版。詳見 [scripts/install-zen-windows.ps1](scripts/install-zen-windows.ps1)。
-
-### 多 KEY 自動輪換（免費額度一直被 429 用光時）
-
-如果單一把 key 動不動就被 `429` 限流，可以多準備幾把 key，讓 injector 自動輪換：
-
+**Windows (PowerShell):**
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\setup-multikey.ps1
 ```
 
-1. 腳本會把多 KEY 版 injector（`scripts/server-multikey.js`）放進 `zen-header-injector` 目錄並重啟。
-2. 第一次執行會建立 `zen-keys.txt` 模板，**請自己把 key 一行一把貼進去**（不要把這個檔案 commit 或外流）。
-3. 某把 key 回 `429`/`401` 時，自動切下一把；被限流的 key 會冷卻退避（60 秒起、逐次加倍、最多 30 分鐘）。
+**macOS / Linux / WSL (Bash):**
+```bash
+chmod +x ./scripts/setup-multikey.sh
+./scripts/setup-multikey.sh
+```
 
-> 提醒：Zen 免費額度是「共用」配額。如果整個免費池都乾了，換幾把 key 都沒用——這是機制能解的上限；額度本身有沒有分帳號計算，以官方公告為準。
+### 2. 設定金鑰 (zen-keys.txt)
+將你的 API Key 貼入使用者目錄底下的 `zen-keys.txt`（每行一把，支援 `#` 註解）：
+- Windows: `%USERPROFILE%\HakkaAICODE\zen-keys.txt`
+- macOS/Linux: `~/HakkaAICODE/zen-keys.txt`
 
-## 免費 AI 路線
+```text
+# 每行一把 OpenCode Zen 金鑰
+sk-zen-abcdef123456...
+sk-zen-789xyz456123...
+```
+> 🔔 **熱重載特性**：儲存檔案後，運作中的代理伺服器會自動載入最新金鑰，**不需手動重啟**！
 
-持續收集可以合法免費/低門檻開始用的路線：
+### 3. 一鍵查詢可用免費模型
+免費模型名單以官方即時 API 為準，請執行專案內建工具查詢：
+```bash
+node scripts/check-models.js
+```
 
-- OpenCode Zen 免費模型：`https://opencode.ai/zen/v1` + zen-header-injector
-- OpenRouter 的 `:free` 模型：<https://openrouter.ai/models?q=:free>
-- GitHub Models：<https://github.com/marketplace/models>
-- Gemini API 免費層：<https://ai.google.dev/gemini-api/docs/pricing>
-- Cloudflare Workers AI：<https://developers.cloudflare.com/workers-ai/>
-- Groq 免費額度：<https://console.groq.com/>
+### 4. 檢測代理健康與金鑰狀態
+在瀏覽器或終端機存取 `http://127.0.0.1:15722/__health`：
+```bash
+curl http://127.0.0.1:15722/__health
+```
 
-更完整的筆記放在 [docs/opencode-zen.md](docs/opencode-zen.md)，之後會繼續補。
+### 5. 自動化測試 (Automated Testing)
+本專案內建完整的零依賴代理測試套件，包含標頭注入、429 原地重試、401 失效標記、熱重載與健康端點檢查：
+```bash
+npm test
+# 或直接執行: node test/test-proxy.js
+```
 
-## 安全提醒
+---
 
-- 不要把金鑰寫進 repo 或公開檔案。
-- 只把本地 proxy 綁在 `127.0.0.1`，不要開到區網。
-- 若上游回 `429`，通常是免費共用額度真的到頂了，休息一下再試；也可以直接去辦新帳號，但請先確認上游服務條款允許多帳號，避免被判定濫用。
+## ❓ 常見問題 (FAQ)
 
-## License
+<details>
+<summary><b>Q1: 遭遇 429 時多 KEY 輪換如何運作？若整個免費池用盡怎麼辦？</b></summary>
+當特定金鑰觸發 429 速率限制時，升級後的 <code>server-multikey.js</code> 會在 Proxy 內部緩存請求並<b>原地使用下一把可用 Key 重試（In-Place Retry）</b>，當前對話不會中斷報錯。但若上游整體的共用免費池均已飽和，輪換亦無法突破上游總量限制，建議切換至 Codestral、OpenRouter 或 Google Gemini 免費層。
+</details>
 
-MIT
+<details>
+<summary><b>Q2: 端口 15722 被佔用 (EADDRINUSE) 怎麼辦？</b></summary>
+重新執行 <code>setup-multikey.ps1</code>（或 <code>setup-multikey.sh</code>），腳本會自動檢查並終止舊 Node 進程後重新啟動。你也可以設定環境變數自訂端口：<br>
+<code>$env:ZEN_INJECTOR_PORT=15723; node scripts/server-multikey.js</code>
+</details>
+
+<details>
+<summary><b>Q3: 金鑰安全性與隱私問題？</b></summary>
+本專案為 100% 本地運行的開源代理，服務只監聽本機 <code>127.0.0.1</code>。金鑰檔 <code>zen-keys.txt</code> 已列入 <code>.gitignore</code>，健康檢查端點也會自動遮蔽金鑰。<br>
+另外請注意，公共免費模型通常保留資料訓練權利，請勿傳輸高度敏感代碼。
+</details>
+
+---
+
+## 🤝 貢獻與反饋
+
+歡迎提交 Issue 與 Pull Request！若有新發現的優質免費後端、Vibe Coding 神器或省額度妙招，歡迎交流分享。
+
+## 📜 授權條款
+
+本專案基於 [MIT License](LICENSE) 開源。
