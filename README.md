@@ -126,6 +126,52 @@ flowchart LR
 
 ---
 
+## 📋 你需要準備 (Prerequisites)
+
+1. **AI Coding 工具**：本機已安裝 Claude Code、Codex、Google Antigravity、Roo Code / Cline、Cursor、Windsurf、DeepSeek Harness 或 OpenManus。
+2. **OpenCode Zen 金鑰**：前往 [opencode.ai](https://opencode.ai) 註冊登入後於 Dashboard 取得（或執行 `opencode auth login`）。
+3. **Node.js LTS 16+**：
+   - Windows: `winget install OpenJS.NodeJS.LTS --silent`
+   - macOS: `brew install node`
+   - Linux: `sudo apt install nodejs npm`
+
+---
+
+## 🎛️ CC Switch 下載與圖文手動配置
+
+[CC Switch](https://github.com/farion1231/cc-switch) 是社群最受歡迎的 AI Coding Provider 管理與快速切換神器。
+
+### 1. 下載 CC Switch
+- **官方網站**：[https://ccswitch.io](https://ccswitch.io)
+- **GitHub Releases**：[https://github.com/farion1231/cc-switch/releases](https://github.com/farion1231/cc-switch/releases)
+  - **Windows**：下載 `CC-Switch-v{version}-Windows.msi`（安裝版）或 `CC-Switch-v{version}-Windows-Portable.zip`（免安裝綠色版）。
+  - **macOS**：`brew install --cask cc-switch` 或下載 `.dmg` 檔。
+
+### 2. 在 CC Switch 加入客家免費代理 (OpenCode Zen)
+1. 開啟 CC Switch，點擊左側或右上角 **「Add Provider (新增服務商)」**。
+2. 填寫以下設定：
+   - **Provider Name**：`Hakka Zen Proxy`（或自訂名稱）
+   - **Base URL**：`http://127.0.0.1:15722/v1`
+   - **API Key**：你的 OpenCode Zen 金鑰（若啟用多 Key 輪換，填入任一把即可）
+   - **Model (模型)**：填入當前可用的 `-free` 模型（例如 `deepseek-v4-flash-free` 或 `mimo-v2.5-free`，可執行 `node scripts/check-models.js` 查詢）
+3. **啟用與生效**：
+   - 在 CC Switch 介面中將此 Provider 切換/指派給 **Claude Code** 或 **Codex**。
+   - 重新開啟對應的終端機視窗，即可開始享受免費 Coding！
+
+---
+
+## 🪄 Windows 一鍵自動安裝腳本 (Automated Setup Script)
+
+Windows 使用者可直接以 PowerShell 執行專案內建的一鍵全自動安裝腳本：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install-zen-windows.ps1
+```
+
+> 💡 **腳本功能**：自動下載最新版 CC Switch Portable 免安裝版、自動下載並配置 zen-header-injector，並自動於背景啟動本地多 KEY 原地重試代理伺服器！詳見 [`scripts/install-zen-windows.ps1`](scripts/install-zen-windows.ps1)。
+
+---
+
 ## 🛠️ 本機管理與實用指令
 
 ### 1. 啟動多 KEY 輪換代理
