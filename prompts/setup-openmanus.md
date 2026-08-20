@@ -27,7 +27,7 @@
    - 【Google AI Studio (Gemini)】:
      * base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
      * api_key = "你的 GEMINI_API_KEY"
-     * model = "gemini-2.5-flash"
+     * model = "gemini-3.7-flash"
 4. 驗證配置並執行 python main.py 進行一個簡單的端到端任務測試（例如「查詢當前熱門開源 AI 專案並產出一份 Markdown 報告」）。
 5. 不要把我的金鑰寫進任何公開檔案。
 ```
@@ -36,4 +36,4 @@
 
 ## 備註
 - **什麼是 Manus 模式**：不同於單純的代碼補全，Manus / OpenManus 是「給定目標後，自己搜尋、自己寫程式、自己執行除錯直到目標達成」的全自動通用 Agent。
-- **推薦模型**：執行複雜 Agent 任務強烈推薦挑選具備強大 Tool Calling 與 Reasoning 能力的模型（如 Claude 3.7 / DeepSeek R1 / Gemini 2.5 Flash / Codestral）。
+- **推薦模型**：執行複雜 Agent 任務強烈推薦挑選具備強大 Tool Calling 與 Reasoning 能力的模型（如 Claude 3.7 Sonnet / DeepSeek R1 / Gemini 3.7 Flash / Codestral）。

@@ -21,7 +21,7 @@
 
 | 工具名稱 | 工具類型 | 推薦指數 | 核心特色與免費搭配方案 |
 | :--- | :--- | :---: | :--- |
-| **🚀 Google Antigravity (AGY)** | 頂級 Agentic IDE / CLI | ⭐⭐⭐⭐⭐ | **Google DeepMind 打造的次世代 Agent 環境**！內建 Planning Mode 架構規劃、Subagents 多代理分工、Artifacts 成果畫布與完整終端操作權限。可直接串接 Gemini 3.1 / 2.5 免費層或自訂 OpenAI 端點。 |
+| **🚀 Google Antigravity (AGY)** | 頂級 Agentic IDE / CLI | ⭐⭐⭐⭐⭐ | **Google DeepMind 打造的次世代 Agent 環境**！內建 Planning Mode 架構規劃、Subagents 多代理分工、Artifacts 成果畫布與完整終端操作權限。可直接串接 Gemini 3.7 Pro / 3.7 Flash 免費層或自訂 OpenAI 端點。 |
 | **🤖 Roo Code (前 Roo Cline) / Cline** | VS Code 開源外掛 | ⭐⭐⭐⭐⭐ | **100% 開源無拘束**！完全自主掌控 Provider，可直接填入本專案代理端點 (`http://127.0.0.1:15722/v1`)、Mistral Codestral 或 OpenRouter 免費模型，支援自訂 MCP 工具與模式切換。 |
 | **🧠 DeepSeek Harness (dsh)** | 官方開源 Agent 工作台 | ⭐⭐⭐⭐⭐ | **DeepSeek 官方 2026 次世代 Agent 框架**！基於 Cordis 內核（Everything is a Plugin），內建 Web 視覺化工作台 (`npx @deepseek-ai/dsh web`)、軌跡可追溯重放，可直接串接 HakkaAICODE 代理或 DeepSeek API。詳見 [dsh 獨立指南](prompts/setup-deepseek-harness.md)。 |
 | **🧠 OpenManus / Manus** | 自主通用 Agent | ⭐⭐⭐⭐⭐ | **熱門通用自主代理**！具備多步任務規劃、瀏覽器自動化（Browser-Use）、代碼撰寫與終端執行能力。可使用開源版 [OpenManus](prompts/setup-openmanus.md) 直接對接 HakkaAICODE 免費代理或 Codestral。 |
@@ -40,19 +40,19 @@
 
 ```mermaid
 flowchart TD
-    A["👑 大腦 (The Brain)<br>Claude 3.7 Sonnet / Claude Opus / DeepSeek R1 / Gemini 3.1 Pro / GPT-4o"] -->|1. 釐清需求、架構選型| B["📋 產出 implementation_plan.md"]
-    B -->|2. 拆解為具體小步驟清單| C["💪 苦工 (The Muscle)<br>Gemini 2.5 Flash Lite / Mistral Codestral / DeepSeek Flash Free / Qwen Coder"]
+    A["👑 大腦 (The Brain)<br>Claude 3.7 Sonnet / DeepSeek R1 / Gemini 3.7 Pro / GPT-4.5 / o3"] -->|1. 釐清需求、架構選型| B["📋 產出 implementation_plan.md"]
+    B -->|2. 拆解為具體小步驟清單| C["💪 苦工 (The Muscle)<br>Gemini 3.7 Flash / Mistral Codestral / DeepSeek Flash Free / Qwen Coder"]
     C -->|3. 依照清單逐檔實作代碼| D["🛠️ 本機執行測試 (Terminal)"]
     D -->|4. 關鍵節點/最後驗收| E["🎯 大腦審查交付 (省下 85%+ 昂貴配額)"]
 ```
 
 ### 1. 🎯 「大腦規劃，苦工打底」模型分工術 (Tiered Brain & Muscle)
 - **第一步：大腦規劃（The Brain）**
-  - **選用模型**：`Claude 3.7 Sonnet (Thinking)`、`Claude Opus 4.8`、`DeepSeek R1`、`Gemini 3.1 Pro`、`GPT-4o`。
+  - **選用模型**：`Claude 3.7 Sonnet (Thinking)`、`DeepSeek R1`、`Gemini 3.7 Pro`、`GPT-4.5`、`o3-mini / o3`。
   - **任務**：深度理解需求、分析技術架構、產出任務清單與 `implementation_plan.md`。
   - **重點**：**只讓大腦做決策與寫架構規格，不要讓大腦逐行輸出幾千行代碼**。
 - **第二步：苦工實作（The Muscle）**
-  - **選用模型**：`Gemini 2.5 Flash Lite`、`Mistral Codestral`、`deepseek-v4-flash-free`、`qwen-2.5-coder-32b-instruct`。
+  - **選用模型**：`Gemini 3.7 Flash`、`Mistral Codestral`、`deepseek-v4-flash-free`、`qwen-2.5-coder-32b-instruct`。
   - **任務**：拿著大腦規劃好的 Step 1~Step 5 清單，**讓它慢慢寫、逐檔填寫實現代碼**。
 - **第三步：大腦驗收（The Critic）**
   - 遇到複雜卡關或全部寫完時，再切回大腦模型做一次性 Code Review 與邊界檢查。

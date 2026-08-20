@@ -19,9 +19,9 @@ GEMINI_API_KEY=你的 GEMINI API KEY（至 https://aistudio.google.com/app/apike
    - Base URL: https://generativelanguage.googleapis.com/v1beta/openai/
    - API Key: (我所提供的 GEMINI_API_KEY)
 3. 呼叫 GET https://generativelanguage.googleapis.com/v1beta/models?key=金鑰 列出當下可用模型，從中挑選：
-   - 主力：最新的 gemini-*-flash（速度與額度平衡）
-   - 大上下文備案：最新的 gemini-*-pro（1M+ context，適合整專案重構）
-   不要寫死 gemini-2.5-flash 等舊型號，以 API 實際回傳為準。
+   - 主力：最新的 gemini-*-flash（如 gemini-3.7-flash，速度與額度平衡）
+   - 大上下文備案：最新的 gemini-*-pro（如 gemini-3.7-pro，1M+ context，適合整專案重構）
+   不要寫死舊型號，以 API 實際回傳為準。
 4. 發送測試請求驗證連線，列出生效配置與該模型當下的免費層額度（從官方 rate-limits 頁面確認）。
 5. 提醒我：免費層資料會被 Google 用於訓練；不要把我的金鑰寫進任何公開檔案。
 ```

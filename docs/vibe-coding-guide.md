@@ -9,7 +9,7 @@
 
 | 工具 | 類型 | 核心優勢 | 免費/平價策略 |
 | :--- | :--- | :--- | :--- |
-| **Google Antigravity (AGY)** | 頂級 Agentic IDE / CLI | Google DeepMind 打造，內建 Planning 模式、Subagents 協同、Artifacts 成果畫布與完整終端工具鏈 | 支援直接串接 Gemini 3.1 / 2.5 免費層或自訂 OpenAI 端點 |
+| **Google Antigravity (AGY)** | 頂級 Agentic IDE / CLI | Google DeepMind 打造，內建 Planning 模式、Subagents 協同、Artifacts 成果畫布與完整終端工具鏈 | 支援直接串接 Gemini 3.7 Pro / 3.7 Flash 免費層或自訂 OpenAI 端點 |
 | **Roo Code (前 Roo Cline) / Cline** | VS Code 擴充套件 | 100% 開源自由，完全自主掌控 Provider，支援自訂 MCP 工具與模式切換（Code/Architect/Ask） | 直接對接本機 HakkaAICODE 代理 (`127.0.0.1:15722`)、Codestral 或 OpenRouter |
 | **DeepSeek Harness (dsh)** | 官方開源 Agent 工作台 | DeepSeek 官方出品（Everything is a Plugin），內建 Web UI、可追溯軌跡重放 | 直接執行 `npx @deepseek-ai/dsh web` 對接代理或 DeepSeek API，詳見 [dsh 指南](../prompts/setup-deepseek-harness.md) |
 | **OpenManus / Manus** | 自主通用 Agent | 全自動多步規劃、網路搜尋、瀏覽器操作（Browser-Use）與終端執行 | 使用開源版 [OpenManus](../prompts/setup-openmanus.md) 對接免費代理或 Codestral |
@@ -29,18 +29,18 @@
 
 ```mermaid
 flowchart TD
-    A["👑 大腦 (The Brain)<br>Claude 3.7 Sonnet / Claude Opus / DeepSeek R1 / Gemini 3.1 Pro / GPT-4o"] -->|1. 釐清需求與架構設計| B["📋 產出詳細 Plan (implementation_plan.md)"]
-    B -->|2. 拆解為具體小步驟| C["💪 苦工 (The Muscle)<br>Gemini 2.5 Flash Lite / Mistral Codestral / DeepSeek Flash Free / Qwen Coder"]
+    A["👑 大腦 (The Brain)<br>Claude 3.7 Sonnet / DeepSeek R1 / Gemini 3.7 Pro / GPT-4.5 / o3"] -->|1. 釐清需求與架構設計| B["📋 產出詳細 Plan (implementation_plan.md)"]
+    B -->|2. 拆解為具體小步驟| C["💪 苦工 (The Muscle)<br>Gemini 3.7 Flash / Mistral Codestral / DeepSeek Flash Free / Qwen Coder"]
     C -->|3. 依照清單逐檔實作代碼| D["🛠️ 測試與除錯 (Local CLI)"]
     D -->|4. 關鍵節點再請大腦驗收| E["🎯 高品質交付 (省下 85%+ 昂貴額度)"]
 ```
 
 - **第一階段（大腦規劃 - Brain）**：
-  - 使用高推理能力模型（如 `Claude 3.7 Sonnet (Thinking)`、`Claude Opus 4.8`、`DeepSeek R1`、`Gemini 3.1 Pro`、`GPT-4o`）。
+  - 使用高推理能力模型（如 `Claude 3.7 Sonnet (Thinking)`、`DeepSeek R1`、`Gemini 3.7 Pro`、`GPT-4.5`、`o3-mini / o3`）。
   - **任務**：需求梳理、架構選型、邊界條件分析、產出步驟清晰的 `implementation_plan.md`。
   - **原則**：只出規劃與規格，**不要讓它直接噴出幾千行實現代碼**。
 - **第二階段（苦工實作 - Muscle）**：
-  - 切換為速度快、配額充裕或免費的模型（如 `Gemini 2.5 Flash Lite`、`Mistral Codestral`、`deepseek-v4-flash-free`、`qwen-2.5-coder-32b-instruct`）。
+  - 切換為速度快、配額充裕或免費的模型（如 `Gemini 3.7 Flash`、`Mistral Codestral`、`deepseek-v4-flash-free`、`qwen-2.5-coder-32b-instruct`）。
   - **任務**：拿著大腦寫好的 Plan，一步一步建立檔案、填寫函式、套用樣式。
 - **第三階段（大腦審查 - Critic）**：
   - 遇到複雜 Bug 或全部功能完成時，再切回大腦模型進行整體驗收與 Code Review。
