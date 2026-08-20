@@ -3,7 +3,7 @@
 <div align="center">
 
 > **「省下每一分算力，用好每一份免費額度。」**  
-> 一個為開發者打造的 AI Coding 免費/低成本後端啟動套件。
+> 一個專為開發者打造的 **AI / Vibe Coding 免費神器推薦、極限省額度指南與後端啟動套件**。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](#)
@@ -14,29 +14,68 @@
 
 ---
 
-## 📖 專案簡介
+## 🌟 🔥 2026 頂級免費 Vibe Coding 神器推薦
 
-**客家 AICODE** 的核心目標非常純粹：**幫助新手與開發者用最簡單的方式，將 Claude Code、Codex、Cursor、Cline 等 AI 寫程式工具對接到免費的大型語言模型後端。**
+想要體驗最流暢的 **Vibe Coding**（自然語言定義架構，AI 自主搬磚寫代碼）？以下是社群評價最高、支援免費/平價方案的開發神器：
 
-只需複製一段預先寫好的提示詞（Prompt），貼給你的 AI Agent，它就會自動幫你把轉發代理、標頭注入器與 [CC Switch](https://github.com/farion1231/cc-switch) 一鍵配置完成，無痛開始寫程式！
-
----
-
-## 🌟 核心特色
-
-- ⚡ **一鍵自動化配置**：提供專屬提示詞，讓 Claude Code 或 Codex 自己搞定環境配置。
-- 🔄 **多 KEY 自動輪換**：遭遇 `429 Too Many Requests` 或 `401` 自動切換至備用金鑰，並支援指數退避冷卻。
-- 🔥 **金鑰動態熱重載 (Hot-Reload)**：修改 `zen-keys.txt` 存檔立即生效，完全不用重啟代理伺服器。
-- 🩺 **即時健康檢測**：內建 `/__health` 與 `/v1/status` 端點，金鑰去識別化遮蔽，安全無虞。
-- 🔍 **零依賴模型檢查工具**：內建 `scripts/check-models.js`，一秒查詢當前最新可用之免費模型（`-free`）。
-- 💻 **跨平台支援**：支援 Windows (PowerShell) 與 macOS / Linux / WSL (Bash)。
-- 🛡️ **安全第一**：金鑰只存在本機，預設排除於 Git 版本控制之外，絕不上傳公開倉庫。
+| 工具名稱 | 工具類型 | 推薦指數 | 核心特色與客家白嫖玩法 |
+| :--- | :--- | :---: | :--- |
+| **🚀 Google Antigravity (AGY)** | 頂級 Agentic IDE / CLI | ⭐⭐⭐⭐⭐ | **Google DeepMind 打造的次世代 Agent 環境**！內建 Planning Mode 深度架構規劃、Subagents 多代理分工、Artifacts 成果即時畫布與完整終端操作權限。可直接串接 Gemini 3.7 / 2.5 免費層或自訂 OpenAI 端點，寫大專案極度強大！ |
+| **🤖 Roo Code (前 Roo Cline) / Cline** | VS Code 開源外掛 | ⭐⭐⭐⭐⭐ | **100% 開源無綁定**！完全自主控制 Provider，可直接填入本專案代理端點 (`http://127.0.0.1:15722/v1`) 或 OpenRouter 免費模型，支援自訂 MCP 工具與模式切換。 |
+| **⚡ Cursor** | AI 原生 IDE | ⭐⭐⭐⭐⭐ | 業界指標級 AI IDE，擁有無敵流暢的 Tab 智慧補全與 Composer 多檔案聯動編輯，提供 Free / Hobby 免費體驗。 |
+| **🌊 Windsurf (by Codeium)** | AI 原生 IDE | ⭐⭐⭐⭐⭐ | 搭載 Cascade 流程感知對話引擎，對整個 Codebase 理解極深，免費版提供極度充裕的 AI 補全與對話額度。 |
+| **⌨️ Claude Code / Codex** | 終端原生 Agent | ⭐⭐⭐⭐ | 終端命令列最愛！純終端運作、原生 Git/Shell 深度整合，搭配本專案的一鍵 Prompt 立即起飛。 |
+| **🌐 Continue.dev / Void Editor** | 開源 VS Code 插件 / IDE | ⭐⭐⭐⭐ | 隱私優先、完全開源透明，支援在 本機 Ollama / HakkaAICODE 代理 / 雲端 API 之間無縫任意切換。 |
+| **⚡ v0 / Bolt.new / Lovable** | Web 快速原型 | ⭐⭐⭐⭐ | 自然語言一鍵生成 Fullstack 網頁與 React 元件，適合靈感驗證與快速前端出圖。 |
 
 ---
 
-## 🚀 快速開始（一鍵提示詞）
+## 🧠 💡 客家頂級省額度心法 (Vibe Coding 算力利用率最大化)
 
-請將以下整段提示詞複製，貼到 **Claude Code** 或 **Codex** 的對話視窗中：
+> **「不要拿重砲打蚊子，也不要讓小兵做大決策。」**  
+> 懂得調配大腦與苦工模型，你的免費額度能多寫 10 倍代碼！
+
+```mermaid
+flowchart TD
+    A["👑 大腦 (The Brain)<br>GPT-5.6 Sol / Claude 3.7 Sonnet / DeepSeek R1"] -->|1. 釐清需求、系統架構選型| B["📋 產出 implementation_plan.md"]
+    B -->|2. 拆解為具體的小檔案步驟| C["💪 苦工 (The Muscle)<br>GPT-5.6 Luna Max / Codex Mini / Gemini Flash Lite / DeepSeek Flash Free"]
+    C -->|3. 依照清單逐檔實作代碼| D["🛠️ 本機執行測試 (Terminal)"]
+    D -->|4. 關鍵節點/最後驗收| E["🎯 大腦審查交付 (省下 85%+ 昂貴配額)"]
+```
+
+### 1. 🎯 「大腦規劃，苦工打底」模型分工術 (Tiered Brain & Muscle)
+- **第一步：大腦規劃（The Brain）**
+  - **選用模型**：`GPT-5.6 Sol`、`Claude 3.7 Sonnet (Thinking)`、`Gemini 3.1 Pro`、`DeepSeek R1`。
+  - **任務**：深度理解需求、分析技術架構、產出任務清單與 `implementation_plan.md`。
+  - **重點**：**只讓大腦做決策與寫虛擬碼，不要讓大腦逐行輸出幾千行代碼**。
+- **第二步：苦工實作（The Muscle）**
+  - **選用模型**：`GPT-5.6 Luna Max`、`Codex Mini`、`Gemini 2.5 Flash Lite`、`deepseek-v4-flash-free`、`mimo-v2.5-free`。
+  - **任務**：拿著大腦規劃好的 Step 1~Step 5 清單，**讓它慢慢寫、逐檔填寫實現代碼**。
+- **第三步：大腦驗收（The Critic）**
+  - 遇到複雜卡關或全部寫完時，再切回大腦模型做一次性 Code Review 與邊界檢查。
+- 💸 **省額度效果**：品質等同全旗艦大模型，但節省高達 **80% ~ 90%** 的珍貴額度！
+
+### 2. 🧹 「Context 瘦身術」避免 Token 滾雪球
+- AI 每輪對話都會重複發送全部歷史與開啟的檔案。對話到第 15 輪，每次隨便問一句話就要消耗 50,000+ Tokens！
+- **客家作法**：每完成一個獨立功能或修好一個 Bug，立刻 `/clear` 或開新對話（New Session），讓 AI 在乾淨輕量的狀態繼續下個任務。
+- **排除雜訊**：設定好 `.gitignore` 或 `.cursorrules`，排除 `node_modules/`、`dist/`、`package-lock.json` 與巨大的 `*.log`。
+
+### 3. ✂️ 「增量 Diff 補丁」拒絕全檔覆寫
+- 修改 500 行檔案中的 2 行，全檔重寫會浪費 500 Output Tokens 且生成極慢。
+- 要求 AI：「**僅輸出 Unified Diff 或 Search/Replace Block**」，速度提升 5 倍且省下大量輸出 Token。
+
+### 4. 🔄 「多 Key 輪換 + 三級備援防線」
+- **第一防線**：OpenCode Zen 免費池（搭配本專案 `server-multikey.js` 多 Key 自動輪換與階梯冷卻）。
+- **第二防線**：OpenRouter `:free` 系列（DeepSeek V3/R1 免費池）。
+- **第三防線**：Google AI Studio Gemini 免費層（每日 1500 請求，1M+ 超大上下文）。
+
+> 📖 更多進階省額度技巧請閱讀 📄 [客家 Vibe Coding 終極指南](docs/vibe-coding-guide.md)。
+
+---
+
+## 🚀 快速開始（一鍵配置提示詞）
+
+將以下整段提示詞複製，貼到 **Claude Code**、**Codex**、**Google Antigravity** 或 **Roo Code** 對話框：
 
 ```text
 請依照 https://github.com/xup61069/HakkaAICODE 的指引，把我這台電腦的 AI coding 環境設定成 OpenCode Zen 免費後端。
@@ -56,7 +95,7 @@ OPEN_CODE_ZEN_KEYS=可選，多 KEY 自動輪換用；有多把 key 就一行一
 7. 完成後列出：CC Switch 安裝位置、injector 運行狀態、設定檔改了哪裡、zen-keys.txt 裡有幾把 key。
 ```
 
-> 💡 更多供應商提示詞（OpenRouter、GitHub Models、Google Gemini 等）請參考 [prompts/](prompts/) 目錄。
+> 💡 更多後端提示詞請參閱 [prompts/](prompts/) 目錄（[OpenRouter](prompts/setup-openrouter-free.md) / [GitHub Models](prompts/setup-github-models.md) / [Google Gemini](prompts/setup-gemini-free.md)）。
 
 ---
 
@@ -64,29 +103,25 @@ OPEN_CODE_ZEN_KEYS=可選，多 KEY 自動輪換用；有多把 key 就一行一
 
 ```mermaid
 flowchart LR
-    A[Claude Code / Codex / IDE] -->|OpenAI 格式請求| B[CC Switch / Proxy Client]
+    A[Claude Code / Codex / Antigravity / Roo Code] -->|OpenAI 格式請求| B[CC Switch / Local Proxy]
     B -->|轉發至 127.0.0.1:15722| C[zen-header-injector<br>server-multikey.js]
-    C -->|注入 x-opencode-client & User-Agent<br>+ 多 Key 輪換與冷卻退避| D[OpenCode Zen<br>https://opencode.ai/zen/v1]
-    D -->|免費模型回應| C
+    C -->|注入 x-opencode-client & User-Agent<br>+ 多 Key 熱重載與冷卻輪換| D[OpenCode Zen<br>https://opencode.ai/zen/v1]
+    D -->|免費模型串流回應| C
     C -->|串流回傳| A
 ```
 
 ### 為什麼需要 zen-header-injector？
-- **CC Switch** 負責管理與切換不同 AI Provider。
-- **zen-header-injector** 在轉送請求時補上 OpenCode Zen 免費方案所必須的兩個特定標頭：
+- **CC Switch** 負責管理與快速切換不同 AI Provider。
+- **zen-header-injector** 負責在轉送請求時補齊 OpenCode Zen 免費方案所要求的兩個特定標頭：
   - `x-opencode-client: terminal`
   - `User-Agent: opencode`
-- 缺少這兩個標頭會導致 Codex 出現 `429 FreeUsageLimitError`。
+- 缺少標頭會導致 Codex 出現 `429 FreeUsageLimitError`。
 
 ---
 
-## 🛠️ 手動安裝與管理
+## 🛠️ 本機管理與實用指令
 
-### 1. 前置需求
-- **Node.js 16+**（[官網下載](https://nodejs.org/) 或 Windows 執行 `winget install OpenJS.NodeJS.LTS --silent`）
-- **Git**
-
-### 2. 啟動多 KEY 輪換代理
+### 1. 啟動多 KEY 輪換代理
 
 **Windows (PowerShell):**
 ```powershell
@@ -99,7 +134,7 @@ chmod +x ./scripts/setup-multikey.sh
 ./scripts/setup-multikey.sh
 ```
 
-### 3. 設定金鑰 (zen-keys.txt)
+### 2. 設定金鑰 (zen-keys.txt)
 將你的 API Key 貼入使用者目錄底下的 `zen-keys.txt`（每行一把，支援 `#` 註解）：
 - Windows: `%USERPROFILE%\HakkaAICODE\zen-keys.txt`
 - macOS/Linux: `~/HakkaAICODE/zen-keys.txt`
@@ -109,10 +144,10 @@ chmod +x ./scripts/setup-multikey.sh
 sk-zen-abcdef123456...
 sk-zen-789xyz456123...
 ```
-> 🔔 **熱重載特性**：儲存檔案後，運作中的代理伺服器會自動載入最新金鑰，不需重啟！
+> 🔔 **熱重載特性**：儲存檔案後，運作中的代理伺服器會自動載入最新金鑰，**不需手動重啟**！
 
-### 4. 查詢可用免費模型
-執行專案內建的檢測工具：
+### 3. 一鍵查詢可用免費模型
+執行專案內建的免依賴檢測工具：
 ```bash
 node scripts/check-models.js
 ```
@@ -132,26 +167,11 @@ node scripts/check-models.js
   6. laguna-s-2.1-free              (擁有者: opencode)
 ```
 
-### 5. 檢測代理健康狀態
+### 4. 檢測代理健康與金鑰狀態
 在瀏覽器或終端機存取 `http://127.0.0.1:15722/__health`：
 ```bash
 curl http://127.0.0.1:15722/__health
 ```
-
----
-
-## 🌐 2026 免費與平價 AI 路線矩陣
-
-除了 OpenCode Zen，我們也整理了其他主流合法免費/低門檻方案：
-
-| 平台 | 適用情境 | 推薦模型 | 提示詞與指南 |
-| :--- | :--- | :--- | :--- |
-| **OpenCode Zen** | 日常主力 Coding | `deepseek-v4-flash-free`<br>`mimo-v2.5-free` | [Prompts](prompts/setup-opencode-zen.md) / [Docs](docs/opencode-zen.md) |
-| **OpenRouter Free** | 多樣化開源模型 | `deepseek/deepseek-chat:free`<br>`meta-llama/llama-3.3-70b-instruct:free` | [Prompts](prompts/setup-openrouter-free.md) |
-| **Google AI Studio** | 超大上下文 / 專案重構 | `gemini-2.5-flash`<br>`gemini-2.5-flash-lite` | [Prompts](prompts/setup-gemini-free.md) |
-| **GitHub Models** | 旗艦商用模型體驗 | `gpt-4o`<br>`gpt-4o-mini` | [Prompts](prompts/setup-github-models.md) |
-
-完整分析請參閱 📄 [2026 免費與平價 AI Coding 指南](docs/free-ai-tiers.md)。
 
 ---
 
@@ -177,7 +197,7 @@ OpenCode Zen 的免費額度是社群共用池。如果整個時段官方免費�
 
 ## 🤝 貢獻與反饋
 
-歡迎提交 Issue 與 Pull Request！若有新發現的優質免費後端或改進建議，歡迎交流分享。
+歡迎提交 Issue 與 Pull Request！若有新發現的優質免費後端、Vibe Coding 神器或省額度妙招，歡迎交流分享。
 
 ## 📜 授權條款
 
