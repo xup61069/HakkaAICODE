@@ -124,6 +124,28 @@ async function runTests() {
     assert(healthJson.keys.total === 3, "成功載入 3 把金鑰");
     assert(healthJson.keys.ready === 3, "初始 3 把金鑰皆處於 ready 狀態");
 
+    // 測試 1.5: CORS 預檢請求
+    console.log("\n[*] 測試 CORS 預檢...");
+    const corsRes = await makeRequest({
+      hostname: "127.0.0.1",
+      port: TEST_PROXY_PORT,
+      path: "/v1/models",
+      method: "OPTIONS",
+    });
+    assert(corsRes.statusCode === 204, "OPTIONS 預檢回應 HTTP 204");
+    assert(corsRes.headers["access-control-allow-origin"] === "*", "OPTIONS 包含 CORS allow-origin");
+
+    // 測試 1.6: 狀態端點
+    const statusRes = await makeRequest({
+      hostname: "127.0.0.1",
+      port: TEST_PROXY_PORT,
+      path: "/v1/status",
+      method: "GET",
+    });
+    const statusJson = JSON.parse(statusRes.body);
+    assert(statusRes.statusCode === 200, "狀態端點回應 HTTP 200");
+    assert(statusJson.status === "ok", "狀態端點 status 為 'ok'");
+
     // 測試 2: 標頭注入 (Header Injection)
     console.log("\n[*] 測試標頭注入與金鑰附帶...");
     mockRequestHistory = [];

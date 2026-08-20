@@ -23,6 +23,7 @@ jobs:
 
     - name: Syntax Check
       run: |
+        node -c src/proxy.js
         node -c scripts/server-multikey.js
         node -c scripts/check-models.js
         node -c test/test-proxy.js

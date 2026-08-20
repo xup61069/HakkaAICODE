@@ -9,9 +9,11 @@
 
 const http = require("http");
 const https = require("https");
+const { readConfig } = require("../src/proxy");
 
 const args = process.argv.slice(2);
-let port = parseInt(process.env.ZEN_INJECTOR_PORT || "15722", 10);
+const config = readConfig();
+let port = config.port;
 let showAll = args.includes("--all");
 let jsonOutput = args.includes("--json");
 
@@ -50,7 +52,7 @@ function fetchJson(url) {
 async function main() {
   const localHealthUrl = `http://127.0.0.1:${port}/__health`;
   const localModelsUrl = `http://127.0.0.1:${port}/v1/models`;
-  const upstreamModelsUrl = `https://opencode.ai/zen/v1/models`;
+  const upstreamModelsUrl = `${config.upstreamProtocol}://${config.upstreamHost}${config.upstreamBase}/models`;
 
   // 1. 檢查本地代理狀態
   let hasLocalProxy = false;
@@ -82,9 +84,8 @@ async function main() {
     process.exit(1);
   }
 
-  const models = modelData.data || [];
-  const freeModels = models.filter((m) => m.id && m.id.endsWith("-free"));
-  const otherModels = models.filter((m) => m.id && !m.id.endsWith("-free"));
+  const models = Array.isArray(modelData.data) ? modelData.data.filter((m) => m.id) : [];
+  const modelIds = models.map((m) => m.id).sort((a, b) => a.localeCompare(b));
 
   if (jsonOutput) {
     console.log(
@@ -93,10 +94,10 @@ async function main() {
           source: sourceName,
           proxyOnline: hasLocalProxy,
           health: healthData,
-          freeModels: freeModels.map((m) => m.id),
-          allModelsCount: models.length,
+          modelCount: modelIds.length,
+          models: modelIds,
           recommendedBaseUrl: `http://127.0.0.1:${port}/v1`,
-          recommendedModel: freeModels.length > 0 ? freeModels[0].id : null,
+          note: "OpenCode Zen 的模型清單端點未標示免費或付費分級；額度與費用請以官方文件為準。",
         },
         null,
         2
@@ -126,32 +127,23 @@ async function main() {
   }
 
   console.log(`\n📦 資料來源: ${sourceName}`);
-  console.log(`✨ 發現免費模型 (-free): ${freeModels.length} 個 | 其他模型: ${otherModels.length} 個\n`);
+  console.log(`✨ 可用模型總數: ${modelIds.length}\n`);
 
   console.log("--------------------------------------------------------");
-  console.log(" 🆓 免費模型推薦清單 (直接填入 CC Switch 或 Agent 配置)");
+  console.log(" 📋 模型清單（官方端點未標示免費或付費分級）");
   console.log("--------------------------------------------------------");
-  freeModels.forEach((m, idx) => {
-    console.log(`  ${idx + 1}. \x1b[32m${m.id.padEnd(30)}\x1b[0m (擁有者: ${m.owned_by || "opencode"})`);
+  const visibleModels = showAll ? modelIds : modelIds.slice(0, 20);
+  visibleModels.forEach((id, idx) => {
+    console.log(`  ${idx + 1}. ${id}`);
   });
-
-  if (showAll && otherModels.length > 0) {
-    console.log("\n--------------------------------------------------------");
-    console.log(" 💳 其他模型 (可能需要額外計費/官方配額)");
-    console.log("--------------------------------------------------------");
-    otherModels.forEach((m, idx) => {
-      console.log(`  ${idx + 1}. ${m.id.padEnd(30)} (擁有者: ${m.owned_by || "opencode"})`);
-    });
-  } else if (otherModels.length > 0) {
-    console.log(`\n💡 提示: 還有 ${otherModels.length} 個非免費模型，若要查看全部請加上參數: node scripts/check-models.js --all`);
+  if (!showAll && modelIds.length > visibleModels.length) {
+    console.log(`\n💡 還有 ${modelIds.length - visibleModels.length} 個模型，若要查看全部請加上參數: node scripts/check-models.js --all`);
   }
+  console.log("\n⚠️ 額度與計費請以官方文件為準：https://opencode.ai/docs/zen/");
 
   console.log("\n========================================================");
   console.log(" 🚀 快速開始建議:");
   console.log(`    Base URL: http://127.0.0.1:${port}/v1`);
-  if (freeModels.length > 0) {
-    console.log(`    推薦模型: ${freeModels[0].id}`);
-  }
   console.log("========================================================\n");
 }
 

@@ -1,100 +1,54 @@
-# OpenCode Zen 免費後端技術筆記
+# OpenCode Zen 技術筆記
 
-OpenCode Zen 的官方免費端點是：
+本文以 OpenCode 官方文件為主，不寫入未經驗證的配額數字。
 
-```text
-https://opencode.ai/zen/v1
-```
+官方來源：
 
-zen-header-injector 把它封裝成本地轉發端點：
-
-```text
-http://127.0.0.1:15722/v1
-```
+- 文件：<https://opencode.ai/docs/zen/>
+- 模型清單端點：<https://opencode.ai/zen/v1/models>
 
 ---
 
-## 註冊與獲取認證
+## 基本事實
 
-1. 可透過官方 CLI 執行 `opencode auth login`，或前往 <https://opencode.ai> 登入。
-2. 登入後至 Dashboard / API Keys 頁面取得認證金鑰。
-3. 將金鑰寫入本機 `%USERPROFILE%\HakkaAICODE\zen-keys.txt`（每行一把）。
-
-官方文件：<https://opencode.ai/docs/zen/>
+- OpenCode Zen 是 OpenCode 官方提供的模型 Gateway，官方文件描述為「測試並驗證過的模型清單」。
+- API key 是選填的，官方文件沒有把 API key 列為必備條件；登入與授權流程請以官方 CLI 與文件為準。
+- 模型清單會變動，部分模型標記為 free，但官方文件亦說明其可能只是限時模型。
+- 官方模型清單端點回傳的 JSON 沒有免費或計費欄位；`scripts/check-models.js` 只列出官方回傳的模型 ID，不猜免費或收費分級。
+- 免費模型、每月限制與費用政策請直接讀官方文件，不要採信本 repo 內任何寫死的數字。
 
 ---
 
-## 快速檢測模型與端點健康
+## 與本專案代理的關係
 
-免費模型名稱隨官方政策隨時調整，**請以即時查詢腳本為準**：
+本專案 `scripts/server-multikey.js` 只是一個本機轉發代理：
+
+```text
+你的 Agent -> http://127.0.0.1:15722/v1 -> OpenCode Zen 官方端點
+```
+
+代理提供多 KEY 輪換、金鑰檔熱重載、健康端點與 CORS，方便你在多個 Agent 之間共用同一組設定。
+
+預設附加的自訂標頭（`x-opencode-client`、`User-Agent: opencode`）是代理的可設定行為；是否為 OpenCode 官方要求，請以官方文件為準。
+
+---
+
+## 可用指令
 
 ```bash
-# 查看本地代理健康狀態與免費模型清單
 node scripts/check-models.js
-
-# 查看所有可用模型（含非免費模型）
-node scripts/check-models.js --all
 ```
 
-`-free` 結尾的模型屬於免費配額模型。
+這個指令會先查本機代理，若代理未啟動則直接查官方模型清單端點。
 
----
-
-## 為什麼需要 zen-header-injector 與 ToS 聲明
-
-CC Switch 或一般代理工具在轉發請求時會重組 Header，缺少 OpenCode Zen 免費方案所要求的兩個特定標頭：
-
-- `x-opencode-client: terminal`
-- `User-Agent: opencode`
-
-zen-header-injector 會在轉送時補齊這兩個標頭，以解決使用 Zen 免費模型時的 `429 FreeUsageLimitError`。
-
-> ⚠️ **服務條款與風險揭露**：  
-> 注入上述標頭本質上是向服務端宣告自身為官方終端客戶端以獲取終端專屬免費額度。此機制可能處於上游服務條款之邊界地帶，隨時有被官方調整或限制之風險，請使用者自行評估。
-
----
-
-## 真·無感原地輪換（In-Place Retry）與熱重載
-
-本專案升級後的 `server-multikey.js` 提供完整的容錯機制：
-
-1. **原地無感重試**：當 upstream 回傳 `429`（限流）或 `401`（無效金鑰）時，代理伺服器會在內部使用下一把可用 Key 重新發送請求，客戶端不會直接報錯中斷。
-2. **401 與 429 差異化處理**：
-   - `401 Unauthorized`：視為無效/被撤銷金鑰（標記為 Dead，冷卻 24 小時），避免重複浪費請求。
-   - `429 Too Many Requests`：標記該 Key 冷卻（60 秒起、指數退避至最多 30 分鐘）；一旦請求成功（HTTP < 400），立即重置連續錯誤計數。
-3. **即時熱重載**：修改 `zen-keys.txt` 存檔後自動熱重載金鑰，無需重啟 Node 進程。
-4. **配額本質說明**：
-   - 多 KEY 輪換適用於應對單一金鑰/帳號的速率限制。若上游整體免費池全線滿載，輪換亦無法產生新配額，此時建議切換至 [docs/free-ai-tiers.md](free-ai-tiers.md) 收錄之 Codestral、OpenRouter 或 Google Gemini 等替代方案。
-
----
-
-## 代理健康與狀態檢查端點
-
-可在瀏覽器或終端機存取：
+健康檢查：
 
 ```bash
 curl http://127.0.0.1:15722/__health
 ```
 
-回傳範例：
-```json
-{
-  "status": "ok",
-  "uptimeSeconds": 180,
-  "totalRequests": 12,
-  "totalRotations": 1,
-  "totalRetriesSucceeded": 1,
-  "keys": {
-    "total": 3,
-    "ready": 2,
-    "cooling": 1,
-    "dead": 0,
-    "currentIndex": 2,
-    "details": [
-      { "index": 1, "maskedKey": "sk-6...ZTLn", "status": "ready" },
-      { "index": 2, "maskedKey": "sk-x...yNPR", "status": "ready" },
-      { "index": 3, "maskedKey": "sk-Q...jRHI", "status": "cooling", "coolingRemainingSeconds": 54 }
-    ]
-  }
-}
-```
+---
+
+## 風險提醒
+
+免費層與多帳號使用可能受上游服務條款限制。請先閱讀 OpenCode 官方文件與條款，再決定是否使用多 KEY 或自訂標頭設定。

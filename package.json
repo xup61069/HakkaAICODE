@@ -1,7 +1,7 @@
 {
   "name": "hakka-aicode",
-  "version": "2.0.0",
-  "description": "客家 AICODE - 給開發者的免費/低成本 AI & Vibe Coding 啟動包與多 KEY 轉發代理",
+  "version": "3.0.0",
+  "description": "客家 AICODE - 可查證的免費/平價 AI coding 後端筆記、設定提示詞與本機多 KEY 轉發代理",
   "main": "scripts/server-multikey.js",
   "scripts": {
     "start": "node scripts/server-multikey.js",
