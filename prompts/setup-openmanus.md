@@ -1,8 +1,10 @@
-# OpenManus（開源版 Manus）本機配置提示詞
+# OpenManus（開源版 Manus）本機配置提示詞（v1.1 修正版）
 
 [OpenManus](https://github.com/mannaandpoem/OpenManus) 是社群打造的 Manus 開源替代方案，具備**全自動多步規劃、網路搜尋、瀏覽器操作（Browser-Use）、代碼撰寫與終端機執行**能力的通用 Agent。
 
 只要串接 HakkaAICODE 本地代理或任何免費 API，就能在自己的電腦上免費跑 Manus 等級的自主代理！
+
+> ⚠️ **模型選擇警告**：OpenManus 這類多步 Agent 強烈依賴**工具呼叫（Tool Calling）與長鏈推理**。Mistral Codestral 是補全/FIM 優化模型，工具呼叫能力較弱，**不建議作為 Manus 主腦**；推薦 Gemini Flash 系列、DeepSeek 系列或 Zen `-free` 中支援 tools 的模型。
 
 ---
 
@@ -19,15 +21,15 @@
    - 【客家代理 (OpenCode Zen)】:
      * base_url = "http://127.0.0.1:15722/v1"
      * api_key = "隨意填寫或 Zen Key"
-     * model = "執行 node scripts/check-models.js 查到的 -free 模型"
-   - 【Mistral Codestral 免費層】:
-     * base_url = "https://api.mistral.ai/v1"
-     * api_key = "你的 MISTRAL_API_KEY"
-     * model = "codestral-latest"
-   - 【Google AI Studio (Gemini)】:
+     * model = "執行 node scripts/check-models.js 查到的 -free 模型（需支援 tool calling）"
+   - 【Google AI Studio (Gemini)】（推薦，工具呼叫穩定）:
      * base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
      * api_key = "你的 GEMINI_API_KEY"
-     * model = "gemini-2.5-flash"
+     * model = "呼叫 https://generativelanguage.googleapis.com/v1beta/models 查到的最新 gemini-*-flash 型號，不要寫死"
+   - 【OpenRouter Free】:
+     * base_url = "https://openrouter.ai/api/v1"
+     * api_key = "你的 OPENROUTER_API_KEY"
+     * model = "從 https://openrouter.ai/api/v1/models 篩選 :free 且支援 tools 的模型"
 4. 驗證配置並執行 python main.py 進行一個簡單的端到端任務測試（例如「查詢當前熱門開源 AI 專案並產出一份 Markdown 報告」）。
 5. 不要把我的金鑰寫進任何公開檔案。
 ```
@@ -36,4 +38,5 @@
 
 ## 備註
 - **什麼是 Manus 模式**：不同於單純的代碼補全，Manus / OpenManus 是「給定目標後，自己搜尋、自己寫程式、自己執行除錯直到目標達成」的全自動通用 Agent。
-- **推薦模型**：執行複雜 Agent 任務強烈推薦挑選具備強大 Tool Calling 與 Reasoning 能力的模型（如 Claude 3.7 / DeepSeek R1 / Gemini 2.5 Flash / Codestral）。
+- **推薦模型**：執行複雜 Agent 任務強烈推薦挑選具備強大 Tool Calling 與 Reasoning 能力的模型（如 Claude Opus 4.8 世代 / DeepSeek R1 系列 / 最新 Gemini Flash）。Codestral 僅適合純程式碼生成，不適合當自主 Agent 的決策腦。
+- **省額度組合**：OpenManus 規劃腦用 Gemini 免費層，瀏覽器搜尋結果整理可另接 Perplexity Sonar（見 setup-perplexity.md）。

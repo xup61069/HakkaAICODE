@@ -1,4 +1,4 @@
-# OpenCode Zen 自動配置提示詞（v2 修正版）
+# OpenCode Zen 自動配置提示詞（v2.1 修正版）
 
 將下方整段提示詞複製並貼給 **Claude Code**、**Codex**、**Roo Code** 或 **Google Antigravity**，即可引導 Agent 自動為你設定好本機環境。
 
@@ -25,7 +25,7 @@ OPEN_CODE_ZEN_KEY=你的 OPENCODE ZEN KEY（可留空；若 Zen 免費模型已�
 6. 根據我當前使用的 Agent 設定 Provider：
    - Base URL: http://127.0.0.1:15722/v1
    - 模型: 使用步驟 5 查到排在最前面的 -free 模型
-7. 發送一個測試請求確認回應正常；若回 429，明確告訴我「這次請求仍會失敗，輪換從下一次請求生效」，並建議我直接重試。
+7. 發送一個測試請求確認回應正常；並用 curl http://127.0.0.1:15722/__health 確認 corsEnabled 為 false（除非我明確要求開啟）。
 8. 完成後列出：CC Switch 安裝位置、injector 運行狀態、__health 回傳摘要、設定檔變更位置。
 ```
 
@@ -34,5 +34,6 @@ OPEN_CODE_ZEN_KEY=你的 OPENCODE ZEN KEY（可留空；若 Zen 免費模型已�
 ## 說明與注意事項
 - **金鑰非必要**：依 Zen 官方說法，免費模型可能不需要 API key（走 OAuth/客戶端識別），以 `opencode auth login` 與官方文件為準。
 - **模型清單是動態的**：README 裡任何寫死的 `-free` 模型名都可能過時，永遠以 `node scripts/check-models.js` 或 `curl https://opencode.ai/zen/v1/models` 的即時回傳為準。
-- **429 的真相**：目前的 multikey proxy 是在「下一次請求」才換 key，本次請求照樣失敗。收到 429 請直接重送，或考慮改用 OpenRouter / Gemini 免費層備援。
+- **429 原地重試**：現行 `server-multikey.js` 會在 Proxy 內部緩存請求 body，遭遇 429/401 時直接換下一把可用 Key 重送（預設最多 3 次，`ZEN_INJECTOR_MAX_RETRY` 可調），本次請求不會直接失敗。僅當所有 Key 都在冷卻或失效時，才會把最後的錯誤回給客戶端。
+- **CORS 預設關閉**：v2.1 起跨來源存取需明確設定 `ZEN_INJECTOR_CORS=1` 才開啟。本代理會注入你的 API Key，對所有網頁開放 CORS 等於把額度暴露給任何你開著的網站。
 - **熱重載**：修改 `zen-keys.txt` 存檔後自動生效，無需重啟。

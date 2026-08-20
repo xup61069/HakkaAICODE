@@ -1,6 +1,6 @@
-# 2026 免費與平價 AI Coding 資源指南（v2 修正版）
+# 2026 免費與平價 AI Coding 資源指南（v2.1 修正版）
 
-> 本版修正 v1 的多處過時與錯誤資訊，並新增隱私欄位。所有額度與模型清單**隨時變動，一律以官方頁面為準**。
+> 本版修正 v1 的多處過時與錯誤資訊，並新增隱私欄位、Perplexity Sonar 與 CC Switch 更新。所有額度與模型清單**隨時變動，一律以官方頁面為準**。
 
 ## ⚠️ v1 重大勘誤
 
@@ -12,6 +12,7 @@
 | OpenRouter 推薦 `llama-3.3-70b:free`、`qwen-2.5-coder:free` | 多數已下架，`:free` 清單替換極快，勿寫死 |
 | Groq `llama-3.3-70b-versatile` | 已被 Llama 4 系列取代 |
 | Windsurf (by Codeium) | 2025-07 已被 Cognition 收購 |
+| CC Switch 只支援 Claude Code / Codex | 2026 年版已支援 **Claude Code、Codex、OpenCode、OpenClaw、Gemini CLI、Hermes Agent**（官方網站 ccswitch.io） |
 
 ## 免費層總表
 
@@ -50,14 +51,29 @@
 | DeepSeek API | ~$0.14/$0.28 per 1M tokens，cache hit $0.0028 | 批次排程、長對話（cache 是關鍵） |
 | Qwen Flash 系列 | 約 $0.03/$0.13 per 1M | 目前市場最低價之一 |
 | MiniMax M 系列 | 約 $0.60/$2.40 per 1M | 高 SWE-bench 中最便宜 |
+| **Perplexity Sonar** | sonar 約 $1/$1 per 1M + 每千次請求搜尋費 | **聯網搜尋 + 引用**，研究/查最新文件專用（非 coding 主力） |
 
-## 三級備援架構（更新版）
+## Perplexity Sonar API（搜尋增強專用）
+
+Perplexity 的定位和其他家完全不同：它是「**即時聯網搜尋 + 附引用來源**」的回答 API，OpenAI 相容（Base URL `https://api.perplexity.ai`）。
+
+- **適合**：查套件最新文件、版本號、changelog、即時價格——coding agent 內建知識有 cutoff，Sonar 補上即時性。
+- **不適合**：純程式碼生成/重構（那不是它優化的方向）。
+- **費用**：預付費按量計費，無永久免費層。Pro 訂閱「每月 $5 API credit」2026 年初有用戶回報已停止，以你的 billing 頁面為準。
+- **接入**：見 [prompts/setup-perplexity.md](../prompts/setup-perplexity.md)。
+
+## 多級備援架構（更新版）
 
 1. **主力**：OpenCode Zen 免費池（注意 ToS 風險）或 GLM Coding Plan（付費但穩）
 2. **第一備援**：Mistral Codestral 免費層（coding 專用、每日 2,000 次）
 3. **第二備援**：OpenRouter `:free`（儲值 $10 解鎖 1,000 次/日）
 4. **大 context 專用**：Google AI Studio（1M+ tokens）
 5. **overflow**：DeepSeek API 按量計費（先儲 $5，開啟用量警示）
+6. **研究/查資料線**：Perplexity Sonar（聯網搜尋 + 引用，與 coding 線並行使用）
+
+## 統一管理：CC Switch
+
+多 provider 切換建議用 [CC Switch](https://github.com/farion1231/cc-switch) 統一管理：一份設定檔同步到 Claude Code / Codex / OpenCode / OpenClaw / Gemini CLI / Hermes Agent，系統匣一鍵切換。一鍵配置提示詞見 [prompts/setup-cc-switch.md](../prompts/setup-cc-switch.md)。
 
 ## 隱私總提醒
 **幾乎所有免費層的資料都可能被用於訓練**。公司專案、未公開程式碼、含個資的內容，請一律走付費 API 並確認該方案的資料政策。

@@ -23,10 +23,12 @@
 | :--- | :--- | :---: | :--- |
 | **🚀 Google Antigravity (AGY)** | 頂級 Agentic IDE / CLI | ⭐⭐⭐⭐⭐ | **Google DeepMind 打造的次世代 Agent 環境**！內建 Planning Mode 架構規劃、Subagents 多代理分工、Artifacts 成果畫布與完整終端操作權限。可直接串接 Gemini 3.1 / 2.5 免費層或自訂 OpenAI 端點。 |
 | **🤖 Roo Code (前 Roo Cline) / Cline** | VS Code 開源外掛 | ⭐⭐⭐⭐⭐ | **100% 開源無拘束**！完全自主掌控 Provider，可直接填入本專案代理端點 (`http://127.0.0.1:15722/v1`)、Mistral Codestral 或 OpenRouter 免費模型，支援自訂 MCP 工具與模式切換。 |
-| **🧠 OpenManus / Manus** | 自主通用 Agent | ⭐⭐⭐⭐⭐ | **熱門通用自主代理**！具備多步任務規劃、瀏覽器自動化（Browser-Use）、代碼撰寫與終端執行能力。可使用開源版 [OpenManus](prompts/setup-openmanus.md) 直接對接 HakkaAICODE 免費代理或 Codestral。 |
+| **🧠 OpenManus / Manus** | 自主通用 Agent | ⭐⭐⭐⭐⭐ | **熱門通用自主代理**！具備多步任務規劃、瀏覽器自動化（Browser-Use）、代碼撰寫與終端執行能力。可使用開源版 [OpenManus](prompts/setup-openmanus.md) 直接對接 HakkaAICODE 免費代理或 Gemini 免費層。 |
+| **🔄 CC Switch** | Provider 切換管理工具 | ⭐⭐⭐⭐⭐ | **本專案的核心樞紐**！一份設定檔同步到 Claude Code / Codex / OpenCode / OpenClaw / Gemini CLI / Hermes Agent，系統匣一鍵切換 provider。用 [一鍵提示詞](prompts/setup-cc-switch.md) 把所有免費後端一次配好。 |
 | **⚡ Cursor** | AI 原生 IDE | ⭐⭐⭐⭐⭐ | 業界指標級 AI IDE，擁有無敵流暢的 Tab 智慧補全與 Composer 多檔案聯動編輯，提供 Free / Hobby 免費體驗。 |
 | **🌊 Windsurf (Cognition)** | AI 原生 IDE | ⭐⭐⭐⭐⭐ | 搭載 Cascade 流程感知對話引擎，對整個 Codebase 理解極深，免費版提供充裕的智慧代碼補全與對話配額。 |
 | **⌨️ Claude Code / Codex** | 終端原生 Agent | ⭐⭐⭐⭐ | 終端命令列最愛！純終端運作、原生 Git/Shell 深度整合，搭配本專案的一鍵 Prompt 立即起飛。 |
+| **🔎 Perplexity Sonar API** | 聯網搜尋 API | ⭐⭐⭐⭐ | **研究/查文件專用**！即時搜尋 + 引用來源，補上 coding agent 知識 cutoff 的即時性缺口。按量計費，見 [配置提示詞](prompts/setup-perplexity.md)。 |
 | **🌐 Continue.dev / Void Editor** | 開源 VS Code 插件 / IDE | ⭐⭐⭐⭐ | 隱私優先、完全開源透明，支援在 本機 Ollama / HakkaAICODE 代理 / 雲端 API 之間無縫任意切換。 |
 | **⚡ v0 / Bolt.new / Lovable** | Web 快速原型 | ⭐⭐⭐⭐ | 自然語言一鍵生成 Fullstack 網頁與 React 元件，適合靈感驗證與快速前端出圖。 |
 
@@ -39,19 +41,19 @@
 
 ```mermaid
 flowchart TD
-    A["👑 大腦 (The Brain)<br>Claude 3.7 Sonnet / Claude Opus / DeepSeek R1 / Gemini 3.1 Pro / GPT-4o"] -->|1. 釐清需求、架構選型| B["📋 產出 implementation_plan.md"]
-    B -->|2. 拆解為具體小步驟清單| C["💪 苦工 (The Muscle)<br>Gemini 2.5 Flash Lite / Mistral Codestral / DeepSeek Flash Free / Qwen Coder"]
+    A["👑 大腦 (The Brain)<br>Claude Opus 4.8 / DeepSeek R1 / Gemini 3.1 Pro / GPT-5.x"] -->|1. 釐清需求、架構選型| B["📋 產出 implementation_plan.md"]
+    B -->|2. 拆解為具體小步驟清單| C["💪 苦工 (The Muscle)<br>Gemini Flash 系列 / Mistral Codestral / Zen -free 模型 / Qwen Coder"]
     C -->|3. 依照清單逐檔實作代碼| D["🛠️ 本機執行測試 (Terminal)"]
     D -->|4. 關鍵節點/最後驗收| E["🎯 大腦審查交付 (省下 85%+ 昂貴配額)"]
 ```
 
 ### 1. 🎯 「大腦規劃，苦工打底」模型分工術 (Tiered Brain & Muscle)
 - **第一步：大腦規劃（The Brain）**
-  - **選用模型**：`Claude 3.7 Sonnet (Thinking)`、`Claude Opus 4.8`、`DeepSeek R1`、`Gemini 3.1 Pro`、`GPT-4o`。
+  - **選用模型**：當代旗艦，如 `Claude Opus 4.8`、`DeepSeek R1`、`Gemini 3.1 Pro`、`GPT-5.x`（以當下最新為準）。
   - **任務**：深度理解需求、分析技術架構、產出任務清單與 `implementation_plan.md`。
   - **重點**：**只讓大腦做決策與寫架構規格，不要讓大腦逐行輸出幾千行代碼**。
 - **第二步：苦工實作（The Muscle）**
-  - **選用模型**：`Gemini 2.5 Flash Lite`、`Mistral Codestral`、`deepseek-v4-flash-free`、`qwen-2.5-coder-32b-instruct`。
+  - **選用模型**：速度快、配額高或免費的模型，如最新 `Gemini Flash`、`Mistral Codestral`、`deepseek-v4-flash-free`（或以 `node scripts/check-models.js` 查到的當下 `-free` 模型）。
   - **任務**：拿著大腦規劃好的 Step 1~Step 5 清單，**讓它慢慢寫、逐檔填寫實現代碼**。
 - **第三步：大腦驗收（The Critic）**
   - 遇到複雜卡關或全部寫完時，再切回大腦模型做一次性 Code Review 與邊界檢查。
@@ -71,6 +73,7 @@ flowchart TD
 - **第二防線**：OpenRouter `:free` 系列（儲值 $10 升級 1,000 req/day 配額）與 NVIDIA NIM（~40 RPM 免費推論）。
 - **第三防線**：Google AI Studio Gemini 免費層（超大上下文，專治大專案重構）。
 - **第四防線（超低價 Overflow）**：DeepSeek V3/V4 直連或智譜 GLM Coding Plan。
+- **研究/查資料線（並行）**：Perplexity Sonar API（即時聯網搜尋 + 引用來源，按量計費）。
 
 > 📖 更多進階省額度技巧請閱讀 📄 [客家 Vibe Coding 終極指南](docs/vibe-coding-guide.md)。
 
@@ -91,14 +94,14 @@ OPEN_CODE_ZEN_KEYS=可選，多 KEY 自動輪換用；有多把 key 就一行一
 2. 檢查本機是否安裝 CC Switch，若無則下載並安裝最新版本。
 3. 取得並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），改用多 KEY 原地重試版 scripts/server-multikey.js 啟動，確認 http://127.0.0.1:15722/v1 正常響應。
 4. 如果提供了 OPEN_CODE_ZEN_KEYS，將金鑰寫入 %USERPROFILE%\HakkaAICODE\zen-keys.txt（不要 commit、不要外流），injector 遇 429/401 會自動在 Proxy 內原地無感重試下一把。
-5. 依照我目前使用的 agent（Claude Code / Codex / Roo Code）設定 Provider：
+5. 依照我目前使用的 agent（Claude Code / Codex / Roo Code / OpenCode / Gemini CLI）設定 Provider：
    - Base URL: http://127.0.0.1:15722/v1
    - 預設模型: 執行 node scripts/check-models.js 挑選目前可用的 -free 模型
 6. 不要把我提供的金鑰寫進 repo、log 或任何公開檔案。
 7. 完成後列出：CC Switch 安裝位置、injector 運行狀態、設定檔改了哪裡、zen-keys.txt 裡有幾把 key。
 ```
 
-> 💡 更多後端與 Agent 提示詞請參閱 [prompts/](prompts/) 目錄（[OpenManus](prompts/setup-openmanus.md) / [Mistral Codestral](prompts/setup-mistral-codestral.md) / [OpenRouter](prompts/setup-openrouter-free.md) / [Google Gemini](prompts/setup-gemini-free.md) / [NVIDIA NIM](prompts/setup-nvidia-nim.md) / [GLM Coding Plan](prompts/setup-glm-coding-plan.md) / [GitHub Models (已退役)](prompts/setup-github-models.md)）。
+> 💡 更多後端與 Agent 提示詞請參閱 [prompts/](prompts/) 目錄（[CC Switch 一鍵全配置](prompts/setup-cc-switch.md) / [OpenManus](prompts/setup-openmanus.md) / [Mistral Codestral](prompts/setup-mistral-codestral.md) / [OpenRouter](prompts/setup-openrouter-free.md) / [Google Gemini](prompts/setup-gemini-free.md) / [NVIDIA NIM](prompts/setup-nvidia-nim.md) / [Perplexity Sonar](prompts/setup-perplexity.md) / [GLM Coding Plan](prompts/setup-glm-coding-plan.md) / [GitHub Models (已退役)](prompts/setup-github-models.md)）。
 
 ---
 
@@ -106,7 +109,7 @@ OPEN_CODE_ZEN_KEYS=可選，多 KEY 自動輪換用；有多把 key 就一行一
 
 ```mermaid
 flowchart LR
-    A[Claude Code / Codex / Antigravity / Roo Code] -->|OpenAI 格式請求| B[CC Switch / Local Proxy]
+    A[Claude Code / Codex / OpenCode / Antigravity / Roo Code] -->|OpenAI 格式請求| B[CC Switch / Local Proxy]
     B -->|轉發至 127.0.0.1:15722| C[zen-header-injector<br>server-multikey.js]
     C -->|注入 x-opencode-client & User-Agent<br>+ 原地無感重試 & 熱重載| D[OpenCode Zen<br>https://opencode.ai/zen/v1]
     D -->|免費模型串流回應| C
@@ -114,7 +117,7 @@ flowchart LR
 ```
 
 ### 為什麼需要 zen-header-injector？
-- **CC Switch** 負責管理與快速切換不同 AI Provider。
+- **CC Switch** 負責管理與快速切換不同 AI Provider（2026 年版支援 Claude Code、Codex、OpenCode、OpenClaw、Gemini CLI、Hermes Agent）。
 - **zen-header-injector** 負責在轉送請求時補齊 OpenCode Zen 免費方案所要求的兩個特定標頭：
   - `x-opencode-client: terminal`
   - `User-Agent: opencode`
@@ -188,6 +191,7 @@ npm test
 <details>
 <summary><b>Q3: 金鑰安全性與隱私問題？</b></summary>
 本專案為 100% 本地運行的開源代理，服務只監聽本機 <code>127.0.0.1</code>。金鑰檔 <code>zen-keys.txt</code> 已列入 <code>.gitignore</code>，健康檢查端點也會自動遮蔽金鑰。<br>
+<strong>CORS 預設關閉</strong>：跨來源存取需明確設定 <code>ZEN_INJECTOR_CORS=1</code> 才開啟——因為代理會自動注入金鑰，對所有網頁開放 CORS 等於把額度暴露給任何你開著的網站。<br>
 另外請注意，公共免費模型通常保留資料訓練權利，請勿傳輸高度敏感代碼。
 </details>
 
