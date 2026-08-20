@@ -6,6 +6,7 @@
 //   - 請求成功 (HTTP < 400) 時：重置該 Key 的連續錯誤次數 (consecutive429 = 0)
 //   - 自動監聽/偵測金鑰檔案 (zen-keys.txt) 修改時間，存檔後自動熱重載
 //   - 日誌輪替機制：日誌大小超過 2MB 時自動滾動，避免檔案無限增長
+//   - CORS 完整支援：支援 OPTIONS 預檢與跨來源存取，相容各類 Web UI / 瀏覽器外掛
 //   - 狀態檢測端點：GET /__health 或 GET /v1/status（金鑰去識別化遮蔽）
 //
 // 環境變數：
@@ -34,6 +35,13 @@ const ROTATE_ON = (process.env.ZEN_INJECTOR_ROTATE_ON || "429,401")
   .filter((n) => !isNaN(n));
 const MAX_RETRIES = parseInt(process.env.ZEN_INJECTOR_MAX_RETRY || "3", 10);
 const DEBUG = process.env.ZEN_INJECTOR_DEBUG === "1";
+
+const isHttps =
+  process.env.ZEN_INJECTOR_UPSTREAM_PROTOCOL !== "http" &&
+  !UPSTREAM_HOST.startsWith("127.0.0.1") &&
+  !UPSTREAM_HOST.startsWith("localhost");
+const clientLib = isHttps ? https : http;
+const protocolStr = isHttps ? "https:" : "http:";
 
 const LOG = process.env.ZEN_INJECTOR_LOG || path.join(__dirname, "injector.log");
 const MAX_LOG_SIZE = 2 * 1024 * 1024; // 2MB
@@ -124,7 +132,7 @@ function reloadKeysIfNeeded() {
   }
 }
 
-// 監聽金鑰檔案異動
+// 監聽金鑰檔案目錄異動
 try {
   if (fs.existsSync(path.dirname(keysFile))) {
     fs.watch(path.dirname(keysFile), (eventType, filename) => {
@@ -168,7 +176,6 @@ function pickKeyIndex(excludeIndices = new Set()) {
   const count = currentKeys.length;
   if (count === 0) return -1;
 
-  // 優先在非冷卻且非排除名單中尋找
   for (let i = 0; i < count; i++) {
     const idx = (currentIndex + i) % count;
     if (!isCooling(idx) && !excludeIndices.has(idx)) {
@@ -177,7 +184,6 @@ function pickKeyIndex(excludeIndices = new Set()) {
     }
   }
 
-  // 若全部都在冷卻，挑選非 dead 且冷卻時間最早結束的那把
   let earliest = -1;
   for (let i = 0; i < count; i++) {
     if (excludeIndices.has(i) || keysState[i].dead) continue;
@@ -200,12 +206,10 @@ function markCooldown(idx, status) {
   const st = keysState[idx];
 
   if (status === 401) {
-    // 401 代表金鑰無效/過期/被撤銷，標記 dead 並冷卻 24 小時
     st.dead = true;
     st.cooldownUntil = now() + 24 * 3600 * 1000;
     log(`[401 Invalid Key] key#${idx + 1} (${maskKey(currentKeys[idx])}) marked DEAD (24h cooldown).`);
   } else {
-    // 429 暫時限流：指數退避 (60s -> 120s -> 240s -> ... 最多 30m)
     st.consecutive429 += 1;
     const backoff = Math.min(60_000 * Math.pow(2, st.consecutive429 - 1), 30 * 60_000);
     st.cooldownUntil = now() + backoff;
@@ -247,7 +251,7 @@ function forwardRequest(req, res, reqBody, triedKeys = new Set()) {
   const u = new URL(req.url, "http://localhost");
   let targetPath = u.pathname;
   if (targetPath.startsWith("/v1")) targetPath = targetPath.slice(3);
-  const targetUrl = `https://${UPSTREAM_HOST}${UPSTREAM_BASE}${targetPath}${u.search}`;
+  const targetUrl = `${protocolStr}//${UPSTREAM_HOST}${UPSTREAM_BASE}${targetPath}${u.search}`;
 
   const headers = {};
   for (const [k, v] of Object.entries(req.headers)) {
@@ -264,13 +268,12 @@ function forwardRequest(req, res, reqBody, triedKeys = new Set()) {
     if (DEBUG) res.setHeader("x-zen-key-index", String(keyIndex + 1));
   }
 
-  // 修正 Content-Length（因為可能有 buffer）
   if (reqBody && reqBody.length > 0) {
     headers["content-length"] = Buffer.byteLength(reqBody);
   }
 
   let requestAborted = false;
-  const upstreamReq = https.request(
+  const upstreamReq = clientLib.request(
     targetUrl,
     { method: req.method, headers },
     (upstreamRes) => {
@@ -278,7 +281,6 @@ function forwardRequest(req, res, reqBody, triedKeys = new Set()) {
 
       const statusCode = upstreamRes.statusCode;
 
-      // 檢查是否遭遇 429 或 401 且符合原地重試條件
       if (
         keyIndex !== -1 &&
         ROTATE_ON.includes(statusCode) &&
@@ -289,11 +291,10 @@ function forwardRequest(req, res, reqBody, triedKeys = new Set()) {
         log(
           `In-place retry triggered for ${req.method} ${targetPath} (attempt ${triedKeys.size}/${MAX_RETRIES})`
         );
-        upstreamRes.resume(); // 消耗上游回應以釋放 socket
+        upstreamRes.resume();
         return forwardRequest(req, res, reqBody, triedKeys);
       }
 
-      // 若先前重試過且本次成功，記錄統計
       if (statusCode < 400) {
         if (keyIndex !== -1) markSuccess(keyIndex);
         if (triedKeys.size > 1) {
@@ -309,6 +310,8 @@ function forwardRequest(req, res, reqBody, triedKeys = new Set()) {
         if (HOP_BY_HOP.has(k.toLowerCase())) continue;
         respHeaders[k] = v;
       }
+      respHeaders["Access-Control-Allow-Origin"] = "*";
+
       res.writeHead(statusCode, respHeaders);
       upstreamRes.pipe(res);
     }
@@ -317,7 +320,10 @@ function forwardRequest(req, res, reqBody, triedKeys = new Set()) {
   upstreamReq.on("error", (err) => {
     log(`ERROR ${req.method} ${targetUrl} -> ${err.message}`);
     if (!res.headersSent) {
-      res.writeHead(502, { "Content-Type": "application/json; charset=utf-8" });
+      res.writeHead(502, {
+        "Content-Type": "application/json; charset=utf-8",
+        "Access-Control-Allow-Origin": "*",
+      });
       res.end(JSON.stringify({ error: { message: `Upstream proxy error: ${err.message}`, type: "proxy_error" } }));
     }
   });
@@ -335,6 +341,19 @@ function forwardRequest(req, res, reqBody, triedKeys = new Set()) {
 
 const server = http.createServer((req, res) => {
   totalRequests++;
+
+  // ---- CORS 預檢請求處理 ----
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "*",
+      "Access-Control-Max-Age": "86400",
+    });
+    res.end();
+    return;
+  }
+
   const u = new URL(req.url, "http://localhost");
 
   // ---- 狀態與健康檢查端點 ----
@@ -367,14 +386,17 @@ const server = http.createServer((req, res) => {
           consecutiveErrors: keysState[idx].consecutive429,
         })),
       },
-      upstream: `https://${UPSTREAM_HOST}${UPSTREAM_BASE}`,
+      upstream: `${protocolStr}//${UPSTREAM_HOST}${UPSTREAM_BASE}`,
       injectedHeaders: {
         [HEADER_NAME]: HEADER_VALUE,
         "user-agent": USER_AGENT,
       },
     };
 
-    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+    res.writeHead(200, {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+    });
     res.end(JSON.stringify(payload, null, 2));
     return;
   }
@@ -412,6 +434,6 @@ process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
 
 server.listen(LISTEN_PORT, "127.0.0.1", () => {
-  const msg = `zen-header-injector (in-place retry enabled) listening on http://127.0.0.1:${LISTEN_PORT}/v1 -> https://${UPSTREAM_HOST}${UPSTREAM_BASE}`;
+  const msg = `zen-header-injector (in-place retry & CORS enabled) listening on http://127.0.0.1:${LISTEN_PORT}/v1 -> ${protocolStr}//${UPSTREAM_HOST}${UPSTREAM_BASE}`;
   log(msg);
 });

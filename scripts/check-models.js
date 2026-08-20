@@ -5,6 +5,7 @@
 //   node scripts/check-models.js
 //   node scripts/check-models.js --port 15722
 //   node scripts/check-models.js --all
+//   node scripts/check-models.js --json
 
 const http = require("http");
 const https = require("https");
@@ -12,6 +13,7 @@ const https = require("https");
 const args = process.argv.slice(2);
 let port = parseInt(process.env.ZEN_INJECTOR_PORT || "15722", 10);
 let showAll = args.includes("--all");
+let jsonOutput = args.includes("--json");
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === "--port" && args[i + 1]) {
@@ -46,33 +48,18 @@ function fetchJson(url) {
 }
 
 async function main() {
-  console.log("\n========================================================");
-  console.log(" 🍜 客家 AICODE - OpenCode Zen 模型與端點狀態檢測");
-  console.log("========================================================\n");
-
   const localHealthUrl = `http://127.0.0.1:${port}/__health`;
   const localModelsUrl = `http://127.0.0.1:${port}/v1/models`;
   const upstreamModelsUrl = `https://opencode.ai/zen/v1/models`;
 
   // 1. 檢查本地代理狀態
   let hasLocalProxy = false;
+  let healthData = null;
   try {
-    process.stdout.write(`[*] 檢測本地代理健康狀態 (http://127.0.0.1:${port}) ... `);
-    const health = await fetchJson(localHealthUrl);
+    healthData = await fetchJson(localHealthUrl);
     hasLocalProxy = true;
-    console.log("✅ 運行中");
-    if (health.keys) {
-      console.log(`    - 註冊金鑰總數: ${health.keys.total} 把 (可用: ${health.keys.ready} / 冷卻中: ${health.keys.cooling})`);
-      if (health.keys.currentIndex > 0) {
-        console.log(`    - 當前使用金鑰: 第 ${health.keys.currentIndex} 把`);
-      }
-      if (health.keys.keysFile) {
-        console.log(`    - 金鑰檔案路徑: ${health.keys.keysFile}`);
-      }
-    }
-  } catch (err) {
-    console.log("⚠️ 本地代理未啟動或為舊版");
-    console.log(`    提示: 可執行 powershell -File .\\scripts\\setup-multikey.ps1 啟動多 KEY 代理`);
+  } catch (_) {
+    hasLocalProxy = false;
   }
 
   // 2. 獲取模型清單
@@ -87,13 +74,56 @@ async function main() {
       sourceName = `官方直連 (${upstreamModelsUrl})`;
     }
   } catch (err) {
-    console.error(`\n❌ 無法取得模型清單: ${err.message}`);
+    if (jsonOutput) {
+      console.log(JSON.stringify({ error: err.message }));
+    } else {
+      console.error(`\n❌ 無法取得模型清單: ${err.message}`);
+    }
     process.exit(1);
   }
 
   const models = modelData.data || [];
   const freeModels = models.filter((m) => m.id && m.id.endsWith("-free"));
   const otherModels = models.filter((m) => m.id && !m.id.endsWith("-free"));
+
+  if (jsonOutput) {
+    console.log(
+      JSON.stringify(
+        {
+          source: sourceName,
+          proxyOnline: hasLocalProxy,
+          health: healthData,
+          freeModels: freeModels.map((m) => m.id),
+          allModelsCount: models.length,
+          recommendedBaseUrl: `http://127.0.0.1:${port}/v1`,
+          recommendedModel: freeModels.length > 0 ? freeModels[0].id : null,
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+
+  console.log("\n========================================================");
+  console.log(" 🍜 客家 AICODE - OpenCode Zen 模型與端點狀態檢測");
+  console.log("========================================================\n");
+
+  if (hasLocalProxy) {
+    console.log(`[*] 本地代理狀態 (http://127.0.0.1:${port}) : ✅ 運行中`);
+    if (healthData && healthData.keys) {
+      console.log(`    - 註冊金鑰總數: ${healthData.keys.total} 把 (可用: ${healthData.keys.ready} / 冷卻: ${healthData.keys.cooling} / 失效: ${healthData.keys.dead || 0})`);
+      if (healthData.keys.currentIndex > 0) {
+        console.log(`    - 當前使用金鑰: 第 ${healthData.keys.currentIndex} 把`);
+      }
+      if (healthData.keys.keysFile) {
+        console.log(`    - 金鑰檔案路徑: ${healthData.keys.keysFile}`);
+      }
+    }
+  } else {
+    console.log(`[*] 本地代理狀態 (http://127.0.0.1:${port}) : ⚠️ 未啟動 (改走官方直連)`);
+    console.log(`    提示: 可執行 powershell -File .\\scripts\\setup-multikey.ps1 啟動代理`);
+  }
 
   console.log(`\n📦 資料來源: ${sourceName}`);
   console.log(`✨ 發現免費模型 (-free): ${freeModels.length} 個 | 其他模型: ${otherModels.length} 個\n`);

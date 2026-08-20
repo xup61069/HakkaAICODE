@@ -6,6 +6,7 @@
 > 一個專為開發者打造的 **AI / Vibe Coding 免費神器推薦、極限省額度攻略與後端啟動套件**。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI Tests](https://github.com/xup61069/HakkaAICODE/actions/workflows/test.yml/badge.svg)](https://github.com/xup61069/HakkaAICODE/actions)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](#)
 [![Node.js](https://img.shields.io/badge/Node.js-16%2B-green.svg)](#)
 [![Status](https://img.shields.io/badge/Status-Maintained-brightgreen.svg)](#)
@@ -160,6 +161,13 @@ node scripts/check-models.js
 在瀏覽器或終端機存取 `http://127.0.0.1:15722/__health`：
 ```bash
 curl http://127.0.0.1:15722/__health
+```
+
+### 5. 自動化測試 (Automated Testing)
+本專案內建完整的零依賴代理測試套件，包含標頭注入、429 原地重試、401 失效標記、熱重載與健康端點檢查：
+```bash
+npm test
+# 或直接執行: node test/test-proxy.js
 ```
 
 ---
