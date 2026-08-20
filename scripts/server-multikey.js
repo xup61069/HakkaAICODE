@@ -1,18 +1,19 @@
 // 多 KEY 輪換版 zen-header-injector：零依賴、可直接取代 server.js 使用。
 //
-// 行為與原版完全相容，另外支援多把 API key 的自動輪換與熱重載：
-//   - 某把 key 回 429（或 401）時，自動切到下一把 key
-//   - 被 429 的 key 進入冷卻退避（60s 起跳、逐次加倍、最多 30 分鐘）
-//   - 自動偵測金鑰檔案 (zen-keys.txt) 修改時間，修改後自動熱重載，無需重啟服務
-//   - 提供健康與狀態檢測端點：GET /__health 或 GET /v1/status
-//   - 設定檔優先於環境變數；沒有設定任何 key 時，行為與原版一樣
-//     （沿用客戶端送來的 Authorization，只補兩個標頭）
+// 行為相容且具備真·無感自動輪換與熱重載：
+//   - 收到 429 時：在 Proxy 內部直接使用下一把可用 Key 原地重試（In-Place Retry），請求不中斷
+//   - 收到 401 時：標記該 Key 為失效/已撤銷 (Dead Key，冷卻 24 小時)，並立即換 Key 重試
+//   - 請求成功 (HTTP < 400) 時：重置該 Key 的連續錯誤次數 (consecutive429 = 0)
+//   - 自動監聽/偵測金鑰檔案 (zen-keys.txt) 修改時間，存檔後自動熱重載
+//   - 日誌輪替機制：日誌大小超過 2MB 時自動滾動，避免檔案無限增長
+//   - 狀態檢測端點：GET /__health 或 GET /v1/status（金鑰去識別化遮蔽）
 //
 // 環境變數：
 //   ZEN_INJECTOR_PORT      : 監聽端口，預設 15722
 //   ZEN_INJECTOR_KEYS_FILE : key 清單檔路徑，一行一把，支援 # 註解
 //   ZEN_INJECTOR_KEYS      : 逗號分隔的 key 清單（inline 用，優先度低於檔案）
 //   ZEN_INJECTOR_ROTATE_ON : 觸發輪換的狀態碼，預設 "429,401"
+//   ZEN_INJECTOR_MAX_RETRY : 單次請求最大原地重試次數，預設 3
 //   ZEN_INJECTOR_DEBUG     : 設為 1 時，回應會帶 x-zen-key-index 方便除錯
 
 const http = require("http");
@@ -31,12 +32,29 @@ const ROTATE_ON = (process.env.ZEN_INJECTOR_ROTATE_ON || "429,401")
   .split(",")
   .map((s) => parseInt(s.trim(), 10))
   .filter((n) => !isNaN(n));
+const MAX_RETRIES = parseInt(process.env.ZEN_INJECTOR_MAX_RETRY || "3", 10);
 const DEBUG = process.env.ZEN_INJECTOR_DEBUG === "1";
 
 const LOG = process.env.ZEN_INJECTOR_LOG || path.join(__dirname, "injector.log");
+const MAX_LOG_SIZE = 2 * 1024 * 1024; // 2MB
+
+function rotateLogIfNeeded() {
+  try {
+    if (fs.existsSync(LOG)) {
+      const stats = fs.statSync(LOG);
+      if (stats.size > MAX_LOG_SIZE) {
+        const oldLog = LOG + ".old";
+        if (fs.existsSync(oldLog)) fs.unlinkSync(oldLog);
+        fs.renameSync(LOG, oldLog);
+      }
+    }
+  } catch (_) {}
+}
+
 function log(msg) {
   const line = `[${new Date().toISOString()}] ${msg}`;
   try {
+    rotateLogIfNeeded();
     fs.appendFileSync(LOG, line + "\n");
   } catch (_) {}
   if (process.stdout.isTTY || process.env.ZEN_INJECTOR_CONSOLE === "1") {
@@ -54,6 +72,7 @@ let currentIndex = 0;
 let lastKeysMtime = 0;
 let totalRequests = 0;
 let totalRotations = 0;
+let totalRetriesSucceeded = 0;
 const startTime = Date.now();
 
 function maskKey(key) {
@@ -73,14 +92,13 @@ function reloadKeysIfNeeded() {
           .map((l) => l.trim())
           .filter((l) => l && !l.startsWith("#"));
 
-        // 更新 keys 清單並保留仍有效的冷卻狀態
         const newKeys = lines;
         const newStates = newKeys.map((k) => {
           const oldIdx = currentKeys.indexOf(k);
           if (oldIdx !== -1 && keysState[oldIdx]) {
             return keysState[oldIdx];
           }
-          return { cooldownUntil: 0, consecutive429: 0 };
+          return { cooldownUntil: 0, consecutive429: 0, dead: false };
         });
 
         currentKeys = newKeys;
@@ -95,19 +113,28 @@ function reloadKeysIfNeeded() {
     log(`[Hot-Reload] Error reading ${keysFile}: ${err.message}`);
   }
 
-  // 若無檔案但環境變數有設置，且目前尚未載入過
   if (currentKeys.length === 0 && process.env.ZEN_INJECTOR_KEYS) {
     currentKeys = process.env.ZEN_INJECTOR_KEYS.split(",")
       .map((k) => k.trim())
       .filter((k) => k);
-    keysState = currentKeys.map(() => ({ cooldownUntil: 0, consecutive429: 0 }));
+    keysState = currentKeys.map(() => ({ cooldownUntil: 0, consecutive429: 0, dead: false }));
     if (currentKeys.length > 0) {
-      log(`Loaded ${currentKeys.length} API keys from ZEN_INJECTOR_KEYS environment variable`);
+      log(`Loaded ${currentKeys.length} API keys from ZEN_INJECTOR_KEYS env variable`);
     }
   }
 }
 
-// 初始載入
+// 監聽金鑰檔案異動
+try {
+  if (fs.existsSync(path.dirname(keysFile))) {
+    fs.watch(path.dirname(keysFile), (eventType, filename) => {
+      if (filename && filename.includes(path.basename(keysFile))) {
+        reloadKeysIfNeeded();
+      }
+    });
+  }
+} catch (_) {}
+
 reloadKeysIfNeeded();
 
 if (currentKeys.length > 0) {
@@ -121,6 +148,8 @@ function now() {
 }
 
 function isCooling(idx) {
+  if (idx < 0 || idx >= keysState.length) return false;
+  if (keysState[idx].dead) return true;
   return now() < keysState[idx].cooldownUntil;
 }
 
@@ -134,47 +163,71 @@ function nextIndexFrom(start) {
   return -1;
 }
 
-function pickKeyIndex() {
+function pickKeyIndex(excludeIndices = new Set()) {
   reloadKeysIfNeeded();
   const count = currentKeys.length;
   if (count === 0) return -1;
-  if (!isCooling(currentIndex)) return currentIndex;
 
-  const next = nextIndexFrom(currentIndex);
-  if (next !== -1) {
-    currentIndex = next;
-    return next;
+  // 優先在非冷卻且非排除名單中尋找
+  for (let i = 0; i < count; i++) {
+    const idx = (currentIndex + i) % count;
+    if (!isCooling(idx) && !excludeIndices.has(idx)) {
+      currentIndex = idx;
+      return idx;
+    }
   }
 
-  // 全部都在冷卻時，挑冷卻最早結束的那把
-  let earliest = 0;
-  for (let i = 1; i < count; i++) {
-    if (keysState[i].cooldownUntil < keysState[earliest].cooldownUntil) {
+  // 若全部都在冷卻，挑選非 dead 且冷卻時間最早結束的那把
+  let earliest = -1;
+  for (let i = 0; i < count; i++) {
+    if (excludeIndices.has(i) || keysState[i].dead) continue;
+    if (earliest === -1 || keysState[i].cooldownUntil < keysState[earliest].cooldownUntil) {
       earliest = i;
     }
   }
-  currentIndex = earliest;
-  return earliest;
+
+  if (earliest !== -1) {
+    currentIndex = earliest;
+    return earliest;
+  }
+
+  return -1;
 }
 
 function markCooldown(idx, status) {
   if (idx < 0 || idx >= keysState.length) return;
   totalRotations++;
   const st = keysState[idx];
-  st.consecutive429 += 1;
-  const backoff = Math.min(60_000 * Math.pow(2, st.consecutive429 - 1), 30 * 60_000);
-  st.cooldownUntil = now() + backoff;
+
+  if (status === 401) {
+    // 401 代表金鑰無效/過期/被撤銷，標記 dead 並冷卻 24 小時
+    st.dead = true;
+    st.cooldownUntil = now() + 24 * 3600 * 1000;
+    log(`[401 Invalid Key] key#${idx + 1} (${maskKey(currentKeys[idx])}) marked DEAD (24h cooldown).`);
+  } else {
+    // 429 暫時限流：指數退避 (60s -> 120s -> 240s -> ... 最多 30m)
+    st.consecutive429 += 1;
+    const backoff = Math.min(60_000 * Math.pow(2, st.consecutive429 - 1), 30 * 60_000);
+    st.cooldownUntil = now() + backoff;
+    log(
+      `[429 Rate Limited] key#${idx + 1} (${maskKey(currentKeys[idx])}) consecutive #${st.consecutive429}, cooling for ${Math.round(
+        backoff / 1000
+      )}s`
+    );
+  }
 
   if (idx === currentIndex) {
     const next = nextIndexFrom(idx);
     if (next !== -1) currentIndex = next;
   }
+}
 
-  log(
-    `key#${idx + 1} (${maskKey(currentKeys[idx])}) got HTTP ${status}, cooling for ${Math.round(
-      backoff / 1000
-    )}s (total: ${currentKeys.length}, next key#${currentIndex + 1})`
-  );
+function markSuccess(idx) {
+  if (idx >= 0 && idx < keysState.length) {
+    if (keysState[idx].consecutive429 > 0) {
+      keysState[idx].consecutive429 = 0;
+    }
+  }
 }
 
 const HOP_BY_HOP = new Set([
@@ -189,6 +242,97 @@ const HOP_BY_HOP = new Set([
   "host",
 ]);
 
+// 轉發請求（含原地無感重試）
+function forwardRequest(req, res, reqBody, triedKeys = new Set()) {
+  const u = new URL(req.url, "http://localhost");
+  let targetPath = u.pathname;
+  if (targetPath.startsWith("/v1")) targetPath = targetPath.slice(3);
+  const targetUrl = `https://${UPSTREAM_HOST}${UPSTREAM_BASE}${targetPath}${u.search}`;
+
+  const headers = {};
+  for (const [k, v] of Object.entries(req.headers)) {
+    if (HOP_BY_HOP.has(k.toLowerCase())) continue;
+    headers[k] = v;
+  }
+  headers[HEADER_NAME] = HEADER_VALUE;
+  headers["user-agent"] = USER_AGENT;
+
+  const keyIndex = pickKeyIndex(triedKeys);
+  if (keyIndex !== -1) {
+    triedKeys.add(keyIndex);
+    headers["authorization"] = `Bearer ${currentKeys[keyIndex]}`;
+    if (DEBUG) res.setHeader("x-zen-key-index", String(keyIndex + 1));
+  }
+
+  // 修正 Content-Length（因為可能有 buffer）
+  if (reqBody && reqBody.length > 0) {
+    headers["content-length"] = Buffer.byteLength(reqBody);
+  }
+
+  let requestAborted = false;
+  const upstreamReq = https.request(
+    targetUrl,
+    { method: req.method, headers },
+    (upstreamRes) => {
+      if (requestAborted) return;
+
+      const statusCode = upstreamRes.statusCode;
+
+      // 檢查是否遭遇 429 或 401 且符合原地重試條件
+      if (
+        keyIndex !== -1 &&
+        ROTATE_ON.includes(statusCode) &&
+        triedKeys.size <= MAX_RETRIES &&
+        triedKeys.size < currentKeys.length
+      ) {
+        markCooldown(keyIndex, statusCode);
+        log(
+          `In-place retry triggered for ${req.method} ${targetPath} (attempt ${triedKeys.size}/${MAX_RETRIES})`
+        );
+        upstreamRes.resume(); // 消耗上游回應以釋放 socket
+        return forwardRequest(req, res, reqBody, triedKeys);
+      }
+
+      // 若先前重試過且本次成功，記錄統計
+      if (statusCode < 400) {
+        if (keyIndex !== -1) markSuccess(keyIndex);
+        if (triedKeys.size > 1) {
+          totalRetriesSucceeded++;
+          log(`In-place retry succeeded on key#${keyIndex + 1}`);
+        }
+      } else if (keyIndex !== -1 && ROTATE_ON.includes(statusCode)) {
+        markCooldown(keyIndex, statusCode);
+      }
+
+      const respHeaders = {};
+      for (const [k, v] of Object.entries(upstreamRes.headers)) {
+        if (HOP_BY_HOP.has(k.toLowerCase())) continue;
+        respHeaders[k] = v;
+      }
+      res.writeHead(statusCode, respHeaders);
+      upstreamRes.pipe(res);
+    }
+  );
+
+  upstreamReq.on("error", (err) => {
+    log(`ERROR ${req.method} ${targetUrl} -> ${err.message}`);
+    if (!res.headersSent) {
+      res.writeHead(502, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: { message: `Upstream proxy error: ${err.message}`, type: "proxy_error" } }));
+    }
+  });
+
+  req.on("aborted", () => {
+    requestAborted = true;
+    upstreamReq.destroy();
+  });
+
+  if (reqBody && reqBody.length > 0) {
+    upstreamReq.write(reqBody);
+  }
+  upstreamReq.end();
+}
+
 const server = http.createServer((req, res) => {
   totalRequests++;
   const u = new URL(req.url, "http://localhost");
@@ -196,25 +340,28 @@ const server = http.createServer((req, res) => {
   // ---- 狀態與健康檢查端點 ----
   if (u.pathname === "/__health" || u.pathname === "/v1/status" || u.pathname === "/status") {
     reloadKeysIfNeeded();
-    const readyKeys = keysState.filter((_, idx) => !isCooling(idx)).length;
-    const coolingKeys = keysState.length - readyKeys;
+    const readyKeys = keysState.filter((st, idx) => !st.dead && !isCooling(idx)).length;
+    const coolingKeys = keysState.filter((st, idx) => !st.dead && isCooling(idx)).length;
+    const deadKeys = keysState.filter((st) => st.dead).length;
 
     const payload = {
       status: "ok",
       uptimeSeconds: Math.floor((now() - startTime) / 1000),
       totalRequests,
       totalRotations,
+      totalRetriesSucceeded,
       keys: {
         total: currentKeys.length,
         ready: readyKeys,
         cooling: coolingKeys,
+        dead: deadKeys,
         currentIndex: currentKeys.length > 0 ? currentIndex + 1 : 0,
         keysFile: fs.existsSync(keysFile) ? keysFile : null,
         details: currentKeys.map((k, idx) => ({
           index: idx + 1,
           maskedKey: maskKey(k),
-          isCooling: isCooling(idx),
-          coolingRemainingSeconds: isCooling(idx)
+          status: keysState[idx].dead ? "dead" : isCooling(idx) ? "cooling" : "ready",
+          coolingRemainingSeconds: isCooling(idx) && !keysState[idx].dead
             ? Math.max(0, Math.round((keysState[idx].cooldownUntil - now()) / 1000))
             : 0,
           consecutiveErrors: keysState[idx].consecutive429,
@@ -232,69 +379,23 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // ---- 轉發 Proxy 請求 ----
-  let targetPath = u.pathname;
-  if (targetPath.startsWith("/v1")) targetPath = targetPath.slice(3);
-  const targetUrl = `https://${UPSTREAM_HOST}${UPSTREAM_BASE}${targetPath}${u.search}`;
-
-  const headers = {};
-  for (const [k, v] of Object.entries(req.headers)) {
-    if (HOP_BY_HOP.has(k.toLowerCase())) continue;
-    headers[k] = v;
-  }
-  headers[HEADER_NAME] = HEADER_VALUE;
-  headers["user-agent"] = USER_AGENT;
-
-  const keyIndex = pickKeyIndex();
-  if (keyIndex !== -1) {
-    headers["authorization"] = `Bearer ${currentKeys[keyIndex]}`;
-    if (DEBUG) res.setHeader("x-zen-key-index", String(keyIndex + 1));
-  }
-
-  const upstreamReq = https.request(
-    targetUrl,
-    { method: req.method, headers },
-    (upstreamRes) => {
-      if (keyIndex !== -1 && ROTATE_ON.includes(upstreamRes.statusCode)) {
-        markCooldown(keyIndex, upstreamRes.statusCode);
-      }
-      const respHeaders = {};
-      for (const [k, v] of Object.entries(upstreamRes.headers)) {
-        if (HOP_BY_HOP.has(k.toLowerCase())) continue;
-        respHeaders[k] = v;
-      }
-      res.writeHead(upstreamRes.statusCode, respHeaders);
-      upstreamRes.pipe(res);
-    }
-  );
-
-  upstreamReq.on("error", (err) => {
-    log(`ERROR ${req.method} ${targetUrl} -> ${err.message}`);
-    if (!res.headersSent) {
-      res.writeHead(502, { "Content-Type": "text/plain; charset=utf-8" });
-    }
-    res.end(`Upstream proxy error: ${err.message}`);
+  // 緩存 Request Body 以支援原地重試
+  const chunks = [];
+  req.on("data", (chunk) => chunks.push(chunk));
+  req.on("end", () => {
+    const reqBody = chunks.length > 0 ? Buffer.concat(chunks) : null;
+    forwardRequest(req, res, reqBody);
   });
-
   req.on("error", (err) => {
     log(`Client request error: ${err.message}`);
-    upstreamReq.destroy();
   });
-
-  req.on("aborted", () => {
-    upstreamReq.destroy();
-  });
-
-  req.pipe(upstreamReq);
 });
 
 server.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
-    log(`[FATAL] Port ${LISTEN_PORT} is already in use by another process.`);
-    console.error(`\n[錯誤] 端口 ${LISTEN_PORT} 已被其他程式佔用。`);
-    console.error(`若已有正在運行的 injector，請先停止它或指定其他端口：`);
-    console.error(`  - 查看佔用: Get-NetTCPConnection -LocalPort ${LISTEN_PORT}`);
-    console.error(`  - 指定端口: $env:ZEN_INJECTOR_PORT=15723; node server-multikey.js\n`);
+    log(`[FATAL] Port ${LISTEN_PORT} is already in use.`);
+    console.error(`\n[錯誤] 端口 ${LISTEN_PORT} 已被佔用。`);
+    console.error(`請執行 powershell -File .\\scripts\\setup-multikey.ps1 自動重啟，或指定端口：$env:ZEN_INJECTOR_PORT=15723\n`);
   } else {
     log(`[FATAL] Server error: ${err.message}`);
     console.error(`伺服器錯誤: ${err.message}`);
@@ -311,9 +412,6 @@ process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
 
 server.listen(LISTEN_PORT, "127.0.0.1", () => {
-  const msg = `zen-header-injector (multikey) listening on http://127.0.0.1:${LISTEN_PORT}/v1 -> https://${UPSTREAM_HOST}${UPSTREAM_BASE}`;
+  const msg = `zen-header-injector (in-place retry enabled) listening on http://127.0.0.1:${LISTEN_PORT}/v1 -> https://${UPSTREAM_HOST}${UPSTREAM_BASE}`;
   log(msg);
-  if (!process.stdout.isTTY && process.env.ZEN_INJECTOR_CONSOLE !== "1") {
-    // 輸出到日誌檔案
-  }
 });

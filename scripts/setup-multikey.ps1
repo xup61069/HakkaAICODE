@@ -68,8 +68,13 @@ if (-not $SkipRestart) {
     $listener = Get-NetTCPConnection -LocalPort $InjectorPort -State Listen -ErrorAction SilentlyContinue
     if ($listener) {
         foreach ($conn in $listener) {
-            Write-Host ("Stopping process on port " + $InjectorPort + " (PID " + $conn.OwningProcess + ")")
-            Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
+            $proc = Get-Process -Id $conn.OwningProcess -ErrorAction SilentlyContinue
+            if ($proc -and $proc.ProcessName -match "node") {
+                Write-Host ("Stopping previous Node injector process on port " + $InjectorPort + " (PID " + $conn.OwningProcess + ")")
+                Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
+            } else {
+                Write-Warning ("Port " + $InjectorPort + " is occupied by non-Node process: " + $proc.ProcessName + " (PID " + $conn.OwningProcess + "). Skipping automatic kill.")
+            }
         }
         Start-Sleep -Seconds 1
     }
@@ -82,11 +87,10 @@ if (-not $SkipRestart) {
         throw ("Failed to bind on 127.0.0.1:" + $InjectorPort + ". Check " + $InjectorDir + "\server-multikey.js and injector.log")
     }
 
-    # Verify health endpoint
     try {
         $healthUrl = "http://127.0.0.1:" + $InjectorPort + "/__health"
         $health = Invoke-RestMethod $healthUrl -TimeoutSec 3
-        Write-Host ("Proxy is online! (Configured keys: " + $health.keys.total + ")") -ForegroundColor Green
+        Write-Host ("Proxy is online! (Configured keys: " + $health.keys.total + " | Ready: " + $health.keys.ready + ")") -ForegroundColor Green
     } catch {
         Write-Host "Proxy started and listening."
     }

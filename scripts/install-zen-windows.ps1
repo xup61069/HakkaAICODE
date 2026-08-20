@@ -34,12 +34,15 @@ if (-not (Test-Path $InjectorDir)) {
     git clone $InjectorRepo $InjectorDir
 }
 
-# 若存在多 KEY 腳本，預設部署並使用多 KEY 版本
 $TargetScript = "server.js"
-if ($UseMultiKey -or (Test-Path $MultikeyServer)) {
-    Copy-Item -LiteralPath $MultikeyServer -Destination (Join-Path $InjectorDir "server-multikey.js") -Force
-    $TargetScript = "server-multikey.js"
-    Write-Host "已部署多 KEY 輪換版本: server-multikey.js" -ForegroundColor Green
+if ($UseMultiKey) {
+    if (Test-Path $MultikeyServer) {
+        Copy-Item -LiteralPath $MultikeyServer -Destination (Join-Path $InjectorDir "server-multikey.js") -Force
+        $TargetScript = "server-multikey.js"
+        Write-Host "已部署多 KEY 輪換版本: server-multikey.js" -ForegroundColor Green
+    } else {
+        Write-Warning "未在腳本旁找到 server-multikey.js，退回標準 server.js"
+    }
 }
 
 $ServerFile = Join-Path $InjectorDir $TargetScript

@@ -56,14 +56,18 @@ else
 fi
 
 echo "==> 重啟多 KEY 轉發代理 (127.0.0.1:$INJECTOR_PORT)"
-# 尋找並終止既有佔用端口的進程
 if command -v lsof >/dev/null 2>&1; then
-    PID=$(lsof -ti :"$INJECTOR_PORT" || true)
-    if [ -n "$PID" ]; then
-        echo "停止佔用端口 $INJECTOR_PORT 的舊進程 (PID $PID)"
-        kill -9 "$PID" 2>/dev/null || true
-        sleep 1
-    fi
+    PIDS=$(lsof -ti :"$INJECTOR_PORT" || true)
+    for PID in $PIDS; do
+        PNAME=$(ps -p "$PID" -o comm= 2>/dev/null || true)
+        if [[ "$PNAME" == *"node"* ]]; then
+            echo "停止佔用端口 $INJECTOR_PORT 的舊 Node 進程 (PID $PID)"
+            kill -9 "$PID" 2>/dev/null || true
+        else
+            echo "警告：端口 $INJECTOR_PORT 被非 Node 進程 ($PNAME, PID $PID) 佔用，略過自動終止。"
+        fi
+    done
+    sleep 1
 fi
 
 # 背景啟動 server-multikey.js

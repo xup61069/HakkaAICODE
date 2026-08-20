@@ -1,13 +1,13 @@
 # Google AI Studio (Gemini) 免費層配置提示詞
 
-Google AI Studio 提供極具性價比且配額充裕的免費層 API（包含 Gemini 2.5 Flash、Flash Lite 等）。
+Google AI Studio 提供配額充裕的免費層 API（包含 Gemini 2.5 Flash、Flash Lite 等，配額以 Google 官方公告為準）。
 
 ---
 
 ## 複製以下提示詞：
 
 ```text
-請幫我將這台電腦的 AI coding 環境（Claude Code / Codex）設定為使用 Google AI Studio (Gemini) 的免費 API 後端。
+請幫我將這台電腦的 AI coding 環境（Claude Code / Codex / Roo Code）設定為使用 Google AI Studio (Gemini) 的免費 API 後端。
 
 GEMINI_API_KEY=你的 GEMINI API KEY (至 https://aistudio.google.com/app/apikey 免費申請)
 
