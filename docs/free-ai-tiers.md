@@ -59,5 +59,35 @@
 4. **大 context 專用**：Google AI Studio（1M+ tokens）
 5. **overflow**：DeepSeek API 按量計費（先儲 $5，開啟用量警示）
 
-## 隱私總提醒
-**幾乎所有免費層的資料都可能被用於訓練**。公司專案、未公開程式碼、含個資的內容，請一律走付費 API 並確認該方案的資料政策。
+---
+
+## 📊 2026 [Artificial Analysis](https://artificialanalysis.ai/leaderboards/providers) 權威評測矩陣
+
+[Artificial Analysis](https://artificialanalysis.ai/leaderboards/providers) 是業界最權威的獨立 AI 模型與 API Provider 基準測試平台（涵蓋 500+ 模型端點）：
+
+### 1. 👑 程式碼智能與 Agent 能力排行 (SWE-bench & Intelligence Index)
+| 模型 | 提供商 | 核心評測亮點 | 適合定位 |
+| :--- | :--- | :--- | :--- |
+| **Claude 3.7 Sonnet (Thinking)** | Anthropic / AWS / GCP | SWE-bench 頂級得分、複雜 Agentic 任務規劃之王 | 👑 需求梳理、架構決策大腦 |
+| **DeepSeek-R1 / V3** | DeepSeek 官方直連 | 深度思維鏈推理、性價比超越所有同級旗艦 | 👑 開源推理大腦 / 苦工實作 |
+| **Gemini 3.7 Pro / 3.7 Flash** | Google AI Studio / Vertex | 1M+ tokens 超大視窗，高速度與強多模態整合 | 👑 全專案重構 / 快速搬磚 |
+| **OpenAI o3 / o3-mini / GPT-4.5** | OpenAI / Azure AI Foundry | 強大數理邏輯與多步長鏈推理 | 👑 演算法驗證與邊界測試 |
+| **Codestral (2501 / Latest)** | Mistral AI | 專門針對代碼訓練，FIM 中間補全極強 | 💪 代碼編寫與補全苦工主力 |
+| **Qwen 2.5 Coder 32B** | 阿里雲 / 各大 Provider | 開源 Coding 模型標竿，支援 128k 上下文 | 💪 本機 Ollama / 雲端實作 |
+
+### 2. ⚡ 極速推論與低延遲排行 (Speed & Latency Benchmark)
+| Provider | 核心優勢與硬體 | 實測表現 | 最佳應用場景 |
+| :--- | :--- | :--- | :--- |
+| **Cerebras** | 晶圓級晶片 (WSE) | **1,700 ~ 3,000+ Tokens/sec** (極致吞吐) | 批次大檔案生成、代碼庫全量掃描 |
+| **Groq** | LPU 專用推論晶片 | **超低首字延遲 (TTFT < 0.2s)**、250-400 TPS | 即時互動對話、終端自動補全 (Autocomplete) |
+| **SambaNova** | SN40L 系統級架構 | 高併發處理 DeepSeek R1 / Llama 系列 | 高負載生產環境、大規模 Agent 團隊 |
+
+### 3. 💸 極致性價比排行 (Price-Performance Benchmark)
+- **DeepSeek API**：每百萬輸入 Tokens 僅 ~$0.14、輸出 ~$0.28，**快取命中 (Cache Hit) 更是低至 $0.014 以下**。
+- **Alibaba Qwen Flash**：每百萬 Tokens 低至 ~$0.03 / $0.13，為目前市場最低價之一。
+- **OpenRouter**：聚合全球 500+ 模型端點，一鍵比價並支援自動切換最便宜/最快節點。
+
+---
+
+## 🔒 隱私與安全性總提醒
+**幾乎所有免費層的資料都可能被用於模型訓練**。公司機密專案、未公開商業代碼、含個人隱私之資料，請一律走付費 API 或確認該方案之 Zero Data Retention (ZDR) 隱私保護條款。

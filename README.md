@@ -73,7 +73,8 @@ flowchart TD
 - **第三防線**：Google AI Studio Gemini 免費層（超大上下文，專治大專案重構）。
 - **第四防線（超低價 Overflow）**：DeepSeek V3/V4 直連或智譜 GLM Coding Plan。
 
-> 📖 更多進階省額度技巧請閱讀 📄 [客家 Vibe Coding 終極指南](docs/vibe-coding-guide.md)。
+> 📖 更多進階省額度技巧請閱讀 📄 [客家 Vibe Coding 終極指南](docs/vibe-coding-guide.md)。  
+> 📊 查看基於 [Artificial Analysis](https://artificialanalysis.ai/leaderboards/providers) 500+ 模型端點實測之智能、速度與性價比矩陣：📄 [2026 免費與平價 AI 資源指南](docs/free-ai-tiers.md)。
 
 ---
 
