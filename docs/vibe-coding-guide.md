@@ -11,6 +11,7 @@
 | :--- | :--- | :--- | :--- |
 | **Google Antigravity (AGY)** | 頂級 Agentic IDE / CLI | Google DeepMind 打造，內建 Planning 模式、Subagents 協同、Artifacts 成果畫布與完整終端工具鏈 | 支援直接串接 Gemini 3.1 / 2.5 免費層或自訂 OpenAI 端點 |
 | **Roo Code (前 Roo Cline) / Cline** | VS Code 擴充套件 | 100% 開源自由，完全自主掌控 Provider，支援自訂 MCP 工具與模式切換（Code/Architect/Ask） | 直接對接本機 HakkaAICODE 代理 (`127.0.0.1:15722`)、Codestral 或 OpenRouter |
+| **DeepSeek Harness (dsh)** | 官方開源 Agent 工作台 | DeepSeek 官方出品（Everything is a Plugin），內建 Web UI、可追溯軌跡重放 | 直接執行 `npx @deepseek-ai/dsh web` 對接代理或 DeepSeek API，詳見 [dsh 指南](../prompts/setup-deepseek-harness.md) |
 | **OpenManus / Manus** | 自主通用 Agent | 全自動多步規劃、網路搜尋、瀏覽器操作（Browser-Use）與終端執行 | 使用開源版 [OpenManus](../prompts/setup-openmanus.md) 對接免費代理或 Codestral |
 | **Cursor** | AI 原生 IDE | 領先的 Tab 補全、Composer 多檔聯動編輯與程式碼索引 | 免費提供 Hobby Tier，可搭配自訂 API Key |
 | **Windsurf (Cognition)** | AI 原生 IDE | Cascade 流程感知對話與深度代碼庫理解 | 免費版提供充裕的智慧代碼補全與對話配額 |

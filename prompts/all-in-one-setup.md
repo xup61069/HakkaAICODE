@@ -1,6 +1,6 @@
 # 🍜 客家 AICODE 全能整合式自動配置提示詞（All-in-One Master Prompt）
 
-只需將下方這一段**大師提示詞 (Master Prompt)** 貼給任何 AI Coding Agent（**Claude Code**、**Codex**、**Google Antigravity**、**Roo Code / Cline** 或 **OpenManus**），Agent 會自動根據你提供的金鑰（或引導你領取免費額度），將你的開發環境設定為最佳的免費/平價 AI 後端！
+只需將下方這一段**大師提示詞 (Master Prompt)** 貼給任何 AI Coding Agent（**Claude Code**、**Codex**、**Google Antigravity**、**Roo Code / Cline**、**DeepSeek Harness (dsh)** 或 **OpenManus**），Agent 會自動根據你提供的金鑰（或引導你領取免費額度），將你的開發環境設定為最佳的免費/平價 AI 後端！
 
 ---
 
@@ -12,6 +12,7 @@
 【我的金鑰/帳號資訊（有的話請填入，沒有請留空，Agent 會自動引導或挑選可用免費路線）】：
 - OPEN_CODE_ZEN_KEY=
 - OPEN_CODE_ZEN_KEYS=（多把 Zen key 請一行一把）
+- DEEPSEEK_API_KEY=
 - MISTRAL_API_KEY=
 - OPENROUTER_API_KEY=
 - GEMINI_API_KEY=
@@ -25,6 +26,7 @@
 
 2. 【自動選擇最優免費後端路徑】：
    - 若提供了 MISTRAL_API_KEY：優先配置 Mistral Codestral（端點: https://api.mistral.ai/v1，模型: codestral-latest，Experiment 方案提供約 1 RPS / 500k TPM 免費額度，專為代碼優化）。
+   - 若提供了 DEEPSEEK_API_KEY：配置 DeepSeek 官方 API（端點: https://api.deepseek.com/v1，模型: deepseek-chat 或 deepseek-reasoner，極致性價比）。
    - 若要使用 OpenCode Zen（或已提供 Zen Key）：
      * 下載並啟動 zen-header-injector（https://github.com/xup61069/zen-header-injector），採用多 KEY 原地重試版 scripts/server-multikey.js 啟動。
      * 若有多把 Key，寫入使用者目錄下的 zen-keys.txt（不要 commit、不要外流）。
@@ -47,6 +49,7 @@
 
 | 後端名稱 | 適用情境 | 免費/平價優勢 | 專屬獨立 Prompt |
 | :--- | :--- | :--- | :--- |
+| **DeepSeek Harness (dsh)** | 官方模組化 Agent 工作台 | Web UI (`npx @deepseek-ai/dsh web`)、可追溯軌跡重放 | [dsh 獨立指南](setup-deepseek-harness.md) |
 | **Mistral Codestral** | 日常主力代碼編寫、補全 | 約 1 RPS (~60 RPM) / 500k TPM（代碼專用） | [Codestral 獨立指南](setup-mistral-codestral.md) |
 | **OpenCode Zen** | 日常主力 Coding | 每日約 100 次，免綁卡，支援多 KEY 原地無感重試 | [Zen 獨立指南](setup-opencode-zen.md) |
 | **OpenRouter Free** | 多樣化開源模型 | 儲值 $10 解鎖每日 1,000 次免費模型調用 | [OpenRouter 獨立指南](setup-openrouter-free.md) |
